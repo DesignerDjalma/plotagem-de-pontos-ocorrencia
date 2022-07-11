@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
+# Bibliotecas necessárias
 import arcpy
 import os
 import sys
 
 
 # RESPONSÁVEL PELO FORMATAÇÃO DE TEXTO DA FERRAMENTA
-reload(sys)
+# reload(sys)
 sys.setdefaultencoding("utf-8")
 
 def texto(txt):
