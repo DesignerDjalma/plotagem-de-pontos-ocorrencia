@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Bibliotecas necessárias
+import getpass
 import arcpy
 import os
 import sys
@@ -18,7 +19,15 @@ def texto(txt):
 
 
 
-class Toolbox(object):
+class PlotadorDeOcorrencias(object):
+
+    usuarios_autorizados = [
+        'djalma.filho',
+        'maria7',
+        'desig',
+        'dflfilho',
+    ]
+
     def __init__(self):
         """Define the toolbox (the name of the toolbox is the name of the
         .pyt file)."""
@@ -47,7 +56,7 @@ class PotadorDeOcorrencias(object):
             }
 
         campos = [
-            ["Tipo de Ocorrencia","tipo_de_ocorrencia"],
+            ["Tipo de Ocorrência","tipo_de_ocorrencia"],
             ["Propriedade","propriedade"],
             ["Latitude","latitude"],
             ["Longitude","longitude"],
@@ -60,7 +69,11 @@ class PotadorDeOcorrencias(object):
 
     def isLicensed(self):
         """Set whether tool is licensed to execute."""
-        return True
+
+        if getpass.getuser() == self.usuarios_autorizados:
+            return True
+        else:
+            return False
 
     def updateParameters(self, parameters):
         """Modify the values and properties of parameters before internal
@@ -76,9 +89,7 @@ class PotadorDeOcorrencias(object):
     def execute(self, parameters, messages):
         """The source code of the tool."""
 
-        messages.addMessage(parameters[0])
-        messages.addMessage(dir(parameters[0]))
-        for i in parameters:
-            messages.addMessage(i.valueAsText)
+        for param in parameters:
+            messages.addMessage(param.valueAsText)
 
         return
