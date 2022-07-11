@@ -22,18 +22,18 @@ class Toolbox(object):
     def __init__(self):
         """Define the toolbox (the name of the toolbox is the name of the
         .pyt file)."""
-        self.label = "Plotagem Automatica"
-        self.alias = "AutoPlot"
+        self.label = "Plotador de Ocorrências"
+        self.alias = "PlotadorDeOcorrencias"
 
         # List of tool classes associated with this toolbox
-        self.tools = [PlotagemAutomatica]
+        self.tools = [PotadorDeOcorrencias]
 
 
-class PlotagemAutomatica(object):
+class PotadorDeOcorrencias(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
-        self.label = "Plotagem Automatica"
-        self.description = "Essa Ferramenta faz a plotagem automatica de coordenadas"
+        self.label = "PPlotador de Ocorrências"
+        self.description = "Esse é o Python Toolbox definitivo que será criado a ferramenta para plotagem de pontos"
         self.canRunInBackground = False
 
     def getParameterInfo(self):
