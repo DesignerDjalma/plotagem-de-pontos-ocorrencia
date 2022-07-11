@@ -1,14 +1,12 @@
-# -*- coding: utf-8 -*-
-
 # Bibliotecas necessárias
 import getpass
 import arcpy
 import os
 import sys
-
+import ctypes
 
 # RESPONSÁVEL PELO FORMATAÇÃO DE TEXTO DA FERRAMENTA
-# reload(sys)
+reload(sys)
 sys.setdefaultencoding("utf-8")
 
 def texto(txt):
@@ -16,46 +14,30 @@ def texto(txt):
     return txt.encode('cp1252')
 
 
+arcpy.FeatureSet
 
-
-
-class PlotadorDeOcorrencias(object):
-
-    usuarios_autorizados = [
-        'djalma.filho',
-        'maria7',
-        'desig',
-        'dflfilho',
-    ]
-
+class Toolbox(object):
     def __init__(self):
         """Define the toolbox (the name of the toolbox is the name of the
         .pyt file)."""
-        self.label = "Plotador de Ocorrências"
-        self.alias = "PlotadorDeOcorrencias"
+        self.label = texto("Plotadem de Pontos Ocorrência")
+        self.alias = ""
 
         # List of tool classes associated with this toolbox
-        self.tools = [PotadorDeOcorrencias]
+        self.tools = [PlotagemOcorrencias]
 
 
-class PotadorDeOcorrencias(object):
-    def __init__(self):
-        """Define the tool (tool name is the name of the class)."""
-        self.label = "PPlotador de Ocorrências"
-        self.description = "Esse é o Python Toolbox definitivo que será criado a ferramenta para plotagem de pontos"
-        self.canRunInBackground = False
+class PlotagemOcorrencias(object):
 
-    def getParameterInfo(self):
-        """Define parameter definitions"""
-            ## Define parameter definitions
+    def definirVariaveis(self):
 
-        ps = {
-            "datatype":"GPString",
-            "parameterType":"Required",
-            "direction":"Input",
-            }
-
-        campos = [
+        self.usuarios_autorizados = [
+            'djalma.filho',
+            'maria7',
+            'desig',
+            'dflfilho',
+        ]
+        self.campos_string = [
             ["Tipo de Ocorrência","tipo_de_ocorrencia"],
             ["Propriedade","propriedade"],
             ["Latitude","latitude"],
@@ -63,14 +45,41 @@ class PotadorDeOcorrencias(object):
             ["Data da Ocorrência","data"],
             ]
 
+
+    def __init__(self):
+        """Define the tool (tool name is the name of the class)."""
+        self.label = "Plotagem de Coordenadas"
+        self.description = texto("Esse é o Python Toolbox definitivo que será criado a ferramenta para plotagem de pontos")
+        self.canRunInBackground = False
+        self.definirVariaveis()
+
+
+
+    def mostrarBoasVindas(self):
+        """Mostra uma janela pro usuário. Altamente Bugada. Não usar."""
+        MessageBox = ctypes.windll.user32.MessageBoxA
+        MessageBox(0, 'Ola Usuario!', 'Janela de Boas-Vindas', 0)
+
+
+    def getParameterInfo(self):
+        """Define parameter definitions"""
+
+        ps = {
+            "datatype":"GPString",
+            "parameterType":"Required",
+            "direction":"Input",
+            }
+
         # clever magic
-        params = [arcpy.Parameter(displayName=texto(i[0]),name=i[1],**ps) for i in campos]
+        params = [
+            arcpy.Parameter(displayName=texto(i[0]),name=i[1],**ps
+            ) for i in self.campos_string]
+
+
         return params
 
     def isLicensed(self):
-        """Set whether tool is licensed to execute."""
-
-        if getpass.getuser() == self.usuarios_autorizados:
+        if getpass.getuser() in self.usuarios_autorizados:
             return True
         else:
             return False
