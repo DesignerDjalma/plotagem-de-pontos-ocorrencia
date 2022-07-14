@@ -10,7 +10,12 @@ import ctypes
 # reload(sys)
 sys.setdefaultencoding("utf-8")
 
-
+extend_para = {
+    "XMax":"-46.05222028269081",
+    "XMin":"-58.90753293530914",
+    "YMax":"2.6002315813091905",
+    "YMin":"-9.850358012309146"
+}
 
 class Constantes:
 
@@ -688,8 +693,8 @@ class PlotagemOcorrencias(object):
         self.campos_string = [
             ["Tipo de Ocorrência","tipo_de_ocorrencia"],
             ["Propriedade","propriedade"],
-            ["Latitude","latitude"],
-            ["Longitude","longitude"],
+            ["Latitude (min:-9.85 max:2.60)","latitude"],
+            ["Longitude (min:-46.05 max:-58.90)","longitude"],
             ["Data da Ocorrência","data"],
             ]
 
