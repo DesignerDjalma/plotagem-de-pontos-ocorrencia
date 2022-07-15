@@ -7,7 +7,7 @@ import sys
 import ctypes
 
 # RESPONSÁVEL PELO FORMATAÇÃO DE TEXTO DA FERRAMENTA
-# reload(sys)
+reload(sys)
 sys.setdefaultencoding("utf-8")
 
 extend_para = {
@@ -17,172 +17,49 @@ extend_para = {
     "YMin":"-9.850358012309146"
 }
 
+class TipoDeGeometria:
+    ponto = "POINT"
+    multiponto = "MULTIPOINT"
+    poligono = "POLYGON"
+    polilinha = "POLYLINE"
+
+
+
+class Projecao:
+    """Retorna o EPSG da Projecao"""
+
+    GCS_SIRGAS = 4170
+    GCS_WGS_1984 = 4326
+    GCS_South_American_1969 = 4618
+    GCS_SAD_1969_96 = 5527
+    SAD_1969_UTM_Zone_21S = 29191
+    SAD_1969_UTM_Zone_22S = 29192
+    SAD_1969_UTM_Zone_23S = 29193
+    SAD_1969_96_UTM_Zone_21S = 5531
+    SAD_1969_96_UTM_Zone_22S = 5858
+    SAD_1969_96_UTM_Zone_23S = 5533
+    SIRGAS_2000_UTM_Zone_21S = 31981
+    SIRGAS_2000_UTM_Zone_22S = 31982
+    SIRGAS_2000_UTM_Zone_23S = 31983
+    South_America_Lambert_Conformal_Conic = 102015
+
+    def referenciaEspacial(self, projecao):
+        """Retorna o objeto referencial espacial apartir de uma Projeção
+
+        Args:
+            projecao (Projecao): Valor número correpondente ao EPSG
+        """
+        arcpy.SpatialReference(projecao)
+
+
+class ArgumentosParametros:
+    pString = {"datatype":"GPString","direction":"Input",}
+    pFeatureSelect = {"datatype":"GPFeatureLayer","direction":"Input",}
+
 class Constantes:
 
     """Constantes necessarias para o projeto"""
-  
-    nomes_municipios = {'ABAETETUBA':'ABAETETUBA',
-        'ABEL FIGUEIREDO':'ABEL FIGUEIREDO',
-        'ACARÁ':'ACARA',
-        'AFUÁ':'AFUA',
-        'ÁGUA AZUL DO NORTE':'AGUA AZUL DO NORTE',
-        'ALENQUER':'ALENQUER',
-        'ALMEIRIM':'ALMEIRIM',
-        'ALTAMIRA':'ALTAMIRA',
-        'ANAJÁS':'ANAJAS',
-        'ANANINDEUA':'ANANINDEUA',
-        'ANAPU':'ANAPU',
-        'AUGUSTO CORRÊA':'AUGUSTO CORREA',
-        'AURORA DO PARÁ':'AURORA DO PARA',
-        'AVEIRO':'AVEIRO',
-        'BAGRE':'BAGRE',
-        'BAIÃO':'BAIAO',
-        'BANNACH':'BANNACH',
-        'BARCARENA':'BARCARENA',
-        'BELÉM':'BELEM',
-        'BELTERRA':'BELTERRA',
-        'BENEVIDES':'BENEVIDES',
-        'BOM JESUS DO TOCANTINS':'BOM JESUS DO TOCANTINS',
-        'BONITO':'BONITO',
-        'BRAGANÇA':'BRAGANCA',
-        'BRASIL NOVO':'BRASIL NOVO',
-        'BREJO GRANDE DO ARAGUAIA':'BREJO GRANDE DO ARAGUAIA',
-        'BREU BRANCO':'BREU BRANCO',
-        'BREVES':'BREVES',
-        'BUJARU':'BUJARU',
-        'CACHOEIRA DO ARARI':'CACHOEIRA DO ARARI',
-        'CACHOEIRA DO PIRIÁ':'CACHOEIRA DO PIRIA',
-        'CAMETÁ':'CAMETA',
-        'CANAÃ DOS CARAJÁS':'CANAA DOS CARAJAS',
-        'CAPANEMA':'CAPANEMA',
-        'CAPITÃO POÇO':'CAPITAO POCO',
-        'CASTANHAL':'CASTANHAL',
-        'CHAVES':'CHAVES',
-        'COLARES':'COLARES',
-        'CONCEIÇÃO DO ARAGUAIA':'CONCEICAO DO ARAGUAIA',
-        'CONCÓRDIA DO PARÁ':'CONCORDIA DO PARA',
-        'CUMARU DO NORTE':'CUMARU DO NORTE',
-        'CURIONÓPOLIS':'CURIONOPOLIS',
-        'CURRALINHO':'CURRALINHO',
-        'CURUÁ':'CURUA',
-        'CURUÇÁ':'CURUCA',
-        'DOM ELISEU':'DOM ELISEU',
-        'ELDORADO DO CARAJÁS':'ELDORADO DO CARAJAS',
-        'FARO':'FARO',
-        'FLORESTA DO ARAGUAIA':'FLORESTA DO ARAGUAIA',
-        'GARRAFÃO DO NORTE':'GARRAFAO DO NORTE',
-        'GOIANÉSIA DO PARÁ':'GOIANESIA DO PARA',
-        'GURUPÁ':'GURUPÁ',
-        'IGARAPÉ-AÇU':'IGARAPE-ACU',
-        'IGARAPÉ-MIRI':'IGARAPE-MIRI',
-        'INHANGAPI':'INHANGAPI',
-        'IPIXUNA DO PARÁ':'IPIXUNA DO PARA',
-        'IRITUIA':'IRITUIA',
-        'ITAITUBA':'ITAITUBA',
-        'ITUPIRANGA':'ITUPIRANGA',
-        'JACAREACANGA':'JACAREACANGA',
-        'JACUNDÁ':'JACUNDA',
-        'JURUTI':'JURUTI',
-        'LIMOEIRO DO AJURU':'LIMOEIRO DO AJURU',
-        'MÃE DO RIO':'MAE DO RIO',
-        'MAGALHÃES BARATA':'MAGALHAES BARATA',
-        'MARABÁ':'MARABA',
-        'MARACANÃ':'MARACANA',
-        'MARAPANIM':'MARAPANIM',
-        'MARITUBA':'MARITUBA',
-        'MEDICILÂNDIA':'MEDICILANDIA',
-        'MELGAÇO':'MELGACO',
-        'MOCAJUBA':'MOCAJUBA',
-        'MOJU':'MOJU',
-        'MOJUÍ DOS CAMPOS':'MOJUI DOS CAMPOS',
-        'MONTE ALEGRE':'MONTE ALEGRE',
-        'MUANÁ':'MUANA',
-        'NOVA ESPERANÇA DO PIRIÁ':'NOVA ESPERANCA DO PIRIA',
-        'NOVA IPIXUNA':'NOVA IPIXUNA',
-        'NOVA TIMBOTEUA':'NOVA TIMBOTEUA',
-        'NOVO PROGRESSO':'NOVO PROGRESSO',
-        'NOVO REPARTIMENTO':'NOVO REPARTIMENTO',
-        'ÓBIDOS':'OBIDOS',
-        'OEIRAS DO PARÁ':'OEIRAS DO PARA',
-        'ORIXIMINÁ':'ORIXIMINA',
-        'OURÉM':'OUREM',
-        'OURILÂNDIA DO NORTE':'OURILANDIA DO NORTE',
-        'PACAJÁ':'PACAJA',
-        'PALESTINA DO PARÁ':'PALESTINA DO PARA',
-        'PARAGOMINAS':'PARAGOMINAS',
-        'PARAUAPEBAS':'PARAUAPEBAS',
-        "PAU D'ARCO":"PAU D'ARCO",
-        'PEIXE-BOI':'PEIXE-BOI',
-        'PIÇARRA':'PICARRA',
-        'PLACAS':'PLACAS',
-        'PONTA DE PEDRAS':'PONTA DE PEDRAS',
-        'PORTEL':'PORTEL',
-        'PORTO DE MOZ':'PORTO DE MOZ',
-        'PRAINHA':'PRAINHA',
-        'PRIMAVERA':'PRIMAVERA',
-        'QUATIPURU':'QUATIPURU',
-        'REDENÇÃO':'REDENCAO',
-        'RIO MARIA':'RIO MARIA',
-        'RONDON DO PARÁ':'RONDON DO PARA',
-        'RURÓPOLIS':'RUROPOLIS',
-        'SALINÓPOLIS':'SALINOPOLIS',
-        'SALVATERRA':'SALVATERRA',
-        'SANTA BÁRBARA DO PARÁ':'SANTA BARBARA DO PARA',
-        'SANTA CRUZ DO ARARI':'SANTA CRUZ DO ARARI',
-        'SANTA IZABEL DO PARÁ':'SANTA ISABEL DO PARA',
-        'SANTA LUZIA DO PARÁ':'SANTA LUZIA DO PARA',
-        'SANTA MARIA DAS BARREIRAS':'SANTA MARIA DAS BARREIRAS',
-        'SANTA MARIA DO PARÁ':'SANTA MARIA DO PARA',
-        'SANTANA DO ARAGUAIA':'SANTANA DO ARAGUAIA',
-        'SANTARÉM':'SANTAREM',
-        'SANTARÉM NOVO':'SANTAREM NOVO',
-        'SANTO ANTÔNIO DO TAUÁ':'SANTO ANTONIO DO TAUA',
-        'SÃO CAETANO DE ODIVELAS':'SAO CAETANO DE ODIVELAS',
-        'SÃO DOMINGOS DO ARAGUAIA':'SAO DOMINGOS DO ARAGUAIA',
-        'SÃO DOMINGOS DO CAPIM':'SAO DOMINGOS DO CAPIM',
-        'SÃO FÉLIX DO XINGU':'SAO FELIX DO XINGU',
-        'SÃO FRANCISCO DO PARÁ':'SAO FRANCISCO DO PARA',
-        'SÃO GERALDO DO ARAGUAIA':'SAO GERALDO DO ARAGUAIA',
-        'SÃO JOÃO DA PONTA':'SAO JOAO DA PONTA',
-        'SÃO JOÃO DE PIRABAS':'SAO JOAO DE PIRABAS',
-        'SÃO JOÃO DO ARAGUAIA':'SAO JOAO DO ARAGUAIA',
-        'SÃO SEBASTIÃO DA BOA VISTA':'SAO SEBASTIAO DA BOA VISTA',
-        'SAPUCAIA':'SAPUCAIA',
-        'SENADOR JOSÉ PORFÍRIO':'SENADOR JOSE PORFIRIO',
-        'SOURE':'SOURE',
-        'TAILÂNDIA':'TAILANDIA',
-        'TERRA ALTA':'TERRA ALTA',
-        'TERRA SANTA':'TERRA SANTA',
-        'TOMÉ-AÇU':'TOME-ACU',
-        'TRACUATEUA':'TRACUATEUA',
-        'TRAIRÃO':'TRAIRAO',
-        'TUCUMÃ':'TUCUMA',
-        'TUCURUÍ':'TUCURUI',
-        'ULIANÓPOLIS':'ULIANOPOLIS',
-        'URUARÁ':'URUARA',
-        'VIGIA':'VIGIA',
-        'VISEU':'VISEU',
-        'VITÓRIA DO XINGU':'VITORIA DO XINGU',
-        'XINGUARA':'XINGUARA'
-    }
-
-    WKID = sistema_de_referencia_de_coordenadas = {'GCS_SIRGAS_2000':4674,
-        'GCS_SIRGAS' 							:4170,
-        'GCS_WGS_1984' 							:4326,
-        'GCS_South_American_1969' 				:4618,
-        'GCS_SAD_1969_96' 						:5527,
-        'SAD_1969_UTM_Zone_21S' 				:29191,
-        'SAD_1969_UTM_Zone_22S' 				:29192,
-        'SAD_1969_UTM_Zone_23S' 				:29193,
-        'SAD_1969_96_UTM_Zone_21S' 				:5531,
-        'SAD_1969_96_UTM_Zone_22S' 				:5858,
-        'SAD_1969_96_UTM_Zone_23S' 				:5533,
-        'SIRGAS_2000_UTM_Zone_21S' 				:31981,
-        'SIRGAS_2000_UTM_Zone_22S' 				:31982,
-        'SIRGAS_2000_UTM_Zone_23S' 				:31983,
-        'South_America_Lambert_Conformal_Conic' :102015,
-        }
-    
+ 
     lLong = [ 'LONG' 		, 9, 0, 0 	]
     lText = [ 'TEXT' 		, 0, 0, 254 ]
     lDate = [ 'DATE' 		, 0, 0, 0 	]
@@ -208,58 +85,20 @@ class Constantes:
         17:{ 'Shape_Area'	:lDouble},
         }
 
-    unicodes_lowercase = ['\xc3\xa1',
-        '\xc3\xa9','\xc3\xad',
-        '\xc3\xb3','\xc3\xba',
-        '\xc3\xa3','\xc3\xb5',
-        '\xc3\xa2','\xc3\xaa',
-        '\xc3\xae','\xc3\xb4',
-        '\xc3\xbb','\xc3\xa7',
-        ]
-
-    unicodes_upercase = ['\xc3\x81',
-        '\xc3\x89','\xc3\x8d',
-        '\xc3\x93','\xc3\x9a',
-        '\xc3\x83','\xc3\x95',
-        '\xc3\x82','\xc3\x8a',
-        '\xc3\x8e','\xc3\x94',
-        '\xc3\x9b','\xc3\x87',
-        ]
-
-    definition_query_mapa_situacao = {1:"{}nmSede = \'{}\'",
-        2:"{}\"nmMun\" <> \'{}\'",
-        3:"{}\"nmMun\" = \'{}\'",
-        }
-
-    nome_das_camadas  = {'carta indice':"CARTA_INDICE_IBGE_DSG",
-        'zee':"ZEE_2010",
-        'mzee':"MZEE_2008",
-        'author':'Djalma Filho',
-        }
-
-conts = Constantes()
-nm = conts.nomes_municipios
-src = conts.sistema_de_referencia_de_coordenadas
-odta = conts.operacoes_da_tabela_de_atributos
-uni_low = conts.unicodes_lowercase
-uni_up = conts.unicodes_upercase
-dqmds = conts.definition_query_mapa_situacao
-nm_Camadas = conts.nome_das_camadas
 
 
+### FUNÇÕES ###
 
 def texto(txt):
     """Recebe uma string e formata ao padrão utf-8"""
     return txt.encode('cp1252')
 
 
-
-### FUNÇÕES ###
-
 def gms_para_dg(valor, casas=15):
     grau, _, minuto, segundo, direcao =  re.split('[°\'"]', valor)
     gdc = (float(grau) + float(minuto)/60 + float(segundo)/(60*60)) * (-1 if direcao in ['W', 'S', 'O'] else 1)
     return round(gdc, casas)
+
 
 def gd_para_gms(valor, casas=15):
     """transforma as coordenadas de grau decimal para grau minuto
@@ -274,6 +113,7 @@ def gd_para_gms(valor, casas=15):
     resultado = '{}°{}\'{}\"'.format(graus, minutos, segundos)
     print(resultado)
 
+
 def gms_para_gd_lista(arquivo_texto):
     """
     Args:
@@ -287,7 +127,8 @@ def gms_para_gd_lista(arquivo_texto):
         for i in a:
             if not i:
                 a.remove(i)
-        
+
+
 def gms_para_gd_converte(arq):
     with open(arq, 'r') as f:
         a = f.read()
@@ -312,35 +153,6 @@ def gms_para_gd_converte(arq):
     with open(arq, "w") as f:
         f.write(cor)
         
-def salvar_projeto(mxd, caminho, nome):
-        """Salva o projeto."""
-
-        if nome.endswith('.mxd'):
-            salvar = os.path.join(caminho, nome)
-        else:
-            salvar = os.path.join(caminho, nome + '.mxd')
-
-        mxd.saveACopy(salvar)
-
-def texto_formatado(valores_carta_indice, pre_texto=" ", mostrar=False):
-    """Retorna o texto que sera utilizada no layout."""
-
-    texto = pre_texto
-    vci = valores_carta_indice
-
-    if len(vci) >= 2:
-        for v in vci:
-            if v != vci[-1] and v != vci[-2]:
-                texto += v + ", "
-            if v == vci[-2]:
-                texto += v + " e "
-            if v == vci[-1]:
-                texto += v
-    else:
-        for v in vci:
-            texto += v
-
-    return texto
 
 def string_to_map(mxd, string_da_camada):
     """Retorna o map correspondente a string."""
@@ -353,6 +165,7 @@ def string_to_map(mxd, string_da_camada):
                 return string_da_camada
     else:
         return string_da_camada
+
 
 def limpar_selecao(camada):
     """Retira a Selecao feita sobre uma determinada camada"""
@@ -423,23 +236,6 @@ def get_valor_tda(camada_interesse, atributo,):
     return [i.getValue(atributo) for i in cursor]
 
 
-def get_carta_indice(camada_interesse, ref_cmd ='carta indice', atributo ='cint', mostrar=False):
-    """Retorna uma lista com os valores das Cartas Indices."""
-
-    return get_atributo_tda(camada_interesse, ref_cmd, atributo, mostrar)
-
-
-def get_zee(camada_interesse, ref_cmd ='zee', atributo ='zona', mostrar=False):
-    """Retorna uma lista com os valores do ZEE."""
-
-    return get_atributo_tda(camada_interesse, ref_cmd, atributo, mostrar)
-
-
-def get_mzee(camada_interesse, ref_cmd ='mzee', atributo ='grupo', mostrar=False):
-    """Retorna uma lista com os valores do MZEE."""
-
-    return get_atributo_tda(camada_interesse, ref_cmd, atributo, mostrar)
-
 
 def zoom(mxd, camada, data_frame):
     """Aplica um zoom numa escala media e numero inteiro."""
@@ -472,92 +268,6 @@ def zoom(mxd, camada, data_frame):
     arcpy.RefreshActiveView()
     print("Escala Selecionada: {}".format(escala))
     return [2, camada]
-
-
-def aplicar_simbologia(nome_camada, camada_a_aplicar):
-    """ Pega a camada desejada copia sua simbologia na camada a aplicar."""
-
-    for layer in arcpy.mapping.ListLayers(arcpy.mapping.MapDocument(caminho_mxd)):
-        if layer.name == nome_camada:
-            simb = layer
-    arcpy.ApplySymbologyFromLayer_management(camada_a_aplicar, simb)
-
-
-def copiar_shapes(camada_a_ser_copiada, camada_alvo):
-    print("copiando os valores")
-    camada_alvo = arcpy.da.InsertCursor(camada_alvo, ["SHAPE@"])
-    with arcpy.da.SearchCursor(camada_a_ser_copiada, ["SHAPE@"]) as cursor:
-        for shape in cursor:
-            camada_alvo.insertRow(shape)  
-            print(shape)
-    print("Atualizando")
-    arcpy.RefreshActiveView()
-
-
-def criar_buffer(camada, distancia_metros=300):
-    pasta = 'C:\\Users\\{0}\\arcgis_temp'.format(getpass.getuser())
-    camada_saida = os.path.join(pasta, "buffer")
-    if not os.path.exists(pasta):
-        os.mkdir(pasta)
-        print("Pasta Criada")
-    else:
-        print("Pasta ja existe, removendo..")
-        try:
-            shutil.rmtree(pasta)
-            os.mkdir(pasta)
-        except Exception as e:
-            print_vermelho("Nao foi possivel realizar remocao e criacao")
-            print_vermelho(str(e))
-            print("\n\tContinuando Processos....\n")
-            
-        print("Pasta Criada")
-
-    distancia = str(distancia_metros) + " Meters"
-    arcpy.Buffer_analysis(camada, camada_saida, distancia)
-    
-    pasta = 'C:\\Users\\{0}\\arcgis_temp'.format(getpass.getuser())
-    caminho_busca = os.path.join(pasta, "buffer.shp")
-    buffer = arcpy.mapping.Layer(caminho_busca)
-    arcpy.mapping.AddLayer(df, buffer, "TOP")
-    print("Buffer Criado com sucesso!")
-    return buffer
-
-
-def apagar_buffer(buffer):
-    mxd = arcpy.mapping.MapDocument(caminho_mxd)
-    principal = arcpy.mapping.ListDataFrames(mxd)[0]
-    layers = arcpy.mapping.ListLayers(mxd)
-    print("Removendo: ",layers[0].name)
-    arcpy.mapping.RemoveLayer(principal, layers[0])
-
-
-def limpa_tda(camada_alvo):
-    arcpy.DeleteRows_management(camada_alvo)
-
-
-def area_limitacao(nome_camada, distancia_metros=300):
-    print("Criando Buffer")
-    buffer = criar_buffer(camada=nome_camada, distancia_metros=300)
-    try:
-        limpa_tda(camada_alvo=r"LEGENDA\AREA DE LIMITACAO")
-    except:
-        print("LimpaTDA falhou, continuando...")
-
-    arg1 = r'C:\Users\dflfilho\arcgis_temp\buffer.shp'
-    arg2 = string_to_map(arcpy.mapping.MapDocument(caminho_mxd),"AREA DE LIMITACAO")
-    
-    print("Args de area de limitacao!")
-    print(arg1)
-    print(arg2)
-    
-    print("COPIANDO AS TABELAS DE TRIBUTOS!")
-    copiar_shapes(
-        camada_a_ser_copiada=arg1,
-        camada_alvo=arg2,
-        )
-    print("APAGANDO BUFFER DO PROJETO!!!!")
-    apagar_buffer(buffer)
-
 
 
 
@@ -667,8 +377,6 @@ class Geometria:
 
 
 
-
-
 class Toolbox(object):
     def __init__(self):
         """Define the toolbox (the name of the toolbox is the name of the
@@ -678,6 +386,7 @@ class Toolbox(object):
 
         # List of tool classes associated with this toolbox
         self.tools = [PlotagemOcorrencias]
+
 
 
 class PlotagemOcorrencias(object):
@@ -691,104 +400,15 @@ class PlotagemOcorrencias(object):
             'dflfilho',
         ]
         self.campos_string = [
-            ["Tipo de Ocorrência","tipo_de_ocorrencia"],
-            ["Propriedade","propriedade"],
-            ["Latitude (min:-9.85   max:2.60)","latitude"],
-            ["Longitude (min:-46.05   max:-58.90)","longitude"],
-            ["Data da Ocorrência","data"],
+            ["Tipo de Ocorrência","tipo_de_ocorrencia", "Required"],
+            ["Propriedade","propriedade","Required"],
+            ["Latitude (min:-9.85   max:2.60)","latitude", "Required"],
+            ["Longitude (min:-46.05   max:-58.90)","longitude", "Required"],
+            ["Data da Ocorrência","data", "Required"],
             ]
-
-    def func_atualiza_situacao(self, mxd, lista):
-        """Atualiza o mapa de situacao de acordo com as 
-        entradas fornecidas (1 ou mais): EX.:
-        att_situacao('BELÉM','ACARÁ',...)"""
-
-        UNICODES_LOWERCASE = ['\xc3\xa1',
-            '\xc3\xa9','\xc3\xad',
-            '\xc3\xb3','\xc3\xba',
-            '\xc3\xa3','\xc3\xb5',
-            '\xc3\xa2','\xc3\xaa',
-            '\xc3\xae','\xc3\xb4',
-            '\xc3\xbb','\xc3\xa7',
+        self.campos_gdb = [
+            ["Salvar no Banco de Dados em:","banco","Required"]
             ]
-
-        UNICODES_UPPERCASE = ['\xc3\x81',
-            '\xc3\x89','\xc3\x8d',
-            '\xc3\x93','\xc3\x9a',
-            '\xc3\x83','\xc3\x95',
-            '\xc3\x82','\xc3\x8a',
-            '\xc3\x8e','\xc3\x94',
-            '\xc3\x9b','\xc3\x87',
-            ]
-
-        DEFINITION_QUERY_SITUACAO = {
-            1:"{}nmSede = \'{}\'",
-            2:"{}nmMun <> \'{}\'",
-            3:"{}nmMun = \'{}\'",
-            }
-
-        P = DEFINITION_QUERY_SITUACAO
-        UNI = UNICODES_UPPERCASE
-        uni = UNICODES_LOWERCASE
-        #municipio = tuple([municipios]) + args
-        municipio = tuple(lista)
-        EXP = ['1', '2', '3']
-        fz = 1.084556648631034
-        df = False
-        
-        cmds = arcpy.mapping.ListLayers(mxd)
-        cdi = [cmd for exp in EXP for cmd in cmds if cmd.description[:1] == exp]
-        
-        if municipio[0] == 'nenhum':
-            e1 = e2 = e3 = ""
-            for i, (c, exp) in enumerate(zip(cdi, [e1, e2, e3])):
-                c.definitionQuery = exp
-            arcpy.RefreshActiveView()
-            return
-
-        if not df:
-            df = arcpy.mapping.ListDataFrames(mxd)[-1]
-
-        if municipio and isinstance(municipio, tuple):
-            lm = []
-            for m in municipio:
-                m.replace(" ", "")
-                m = m.upper()
-                for u, U in zip(uni, UNI):
-                    m = m.replace(u,U)
-
-                lm.append(m)
-            for i, v in enumerate(lm):
-
-                if i == 0:
-                    e1 = P[1].format("", v)
-                    e2 = P[2].format("", v)
-                    e3 = P[3].format("", v)
-                    continue
-
-                e1 += P[1].format(" OR ", v)
-                e2 += P[2].format(" AND ",v)
-                e3 += P[3].format(" OR ", v)
-
-        if municipio and isinstance(municipio, str):
-            municipio = municipio.upper()
-            for u, U in zip(uni, UNI):
-                municipio = municipio.replace(u,U)
-                m = municipio
-
-            e1 = P[1].format("",m)
-            e2 = P[2].format("",m)
-            e3 = P[3].format("",m)
-        
-        for i, (c, exp) in enumerate(zip(cdi, [e1, e2, e3])):
-            c.definitionQuery = exp
-            if i == 2:
-                z = c.getSelectedExtent()
-
-        df.extent = z
-        df.scale *= fz
-
-        arcpy.RefreshActiveView()
 
 
     def __init__(self):
@@ -818,7 +438,11 @@ class PlotagemOcorrencias(object):
         # clever magic
         params = [
             arcpy.Parameter(displayName=texto(i[0]),name=i[1],**ps
-            ) for i in self.campos_string]
+            ) for i in self.campos_string
+            ] + [
+            arcpy.Parameter(displayName=texto(i[0]),name=i[1],**
+            ) for i in self.campos_gdb
+            ]
 
 
         return params
