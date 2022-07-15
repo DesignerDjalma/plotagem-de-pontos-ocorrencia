@@ -693,8 +693,8 @@ class PlotagemOcorrencias(object):
         self.campos_string = [
             ["Tipo de Ocorrência","tipo_de_ocorrencia"],
             ["Propriedade","propriedade"],
-            ["Latitude (min:-9.85 max:2.60)","latitude"],
-            ["Longitude (min:-46.05 max:-58.90)","longitude"],
+            ["Latitude (min:-9.85   max:2.60)","latitude"],
+            ["Longitude (min:-46.05   max:-58.90)","longitude"],
             ["Data da Ocorrência","data"],
             ]
 
