@@ -21,9 +21,19 @@ extend_para = {
 
 ### FUNÇÕES ###
 
+# formatador de texto
 def texto(txt):
     """Recebe uma string e formata ao padrão utf-8"""
     return txt.encode('cp1252')
+
+def textoLista(lista):
+    """Recebe uma lista e formata ao padrão utf-8"""
+    return [texto(i) for i in lista]
+
+def formata_lista_string(lista_anterior):
+    """Formata uma lista (list[list[str]]) para encoding cp1252."""
+    nova_lista = [ textoLista(i) for i in lista_anterior ]
+    return nova_lista 
 
 
 def gms_para_dg(valor, casas=15):
@@ -203,39 +213,6 @@ def zoom(mxd, camada, data_frame):
 
 
 
-class TipoDeGeometria:
-    ponto = "POINT"
-    multiponto = "MULTIPOINT"
-    poligono = "POLYGON"
-    polilinha = "POLYLINE"
-
-
-class Projecao:
-    """Retorna o EPSG da Projecao"""
-
-    GCS_SIRGAS = 4170
-    GCS_WGS_1984 = 4326
-    GCS_South_American_1969 = 4618
-    GCS_SAD_1969_96 = 5527
-    SAD_1969_UTM_Zone_21S = 29191
-    SAD_1969_UTM_Zone_22S = 29192
-    SAD_1969_UTM_Zone_23S = 29193
-    SAD_1969_96_UTM_Zone_21S = 5531
-    SAD_1969_96_UTM_Zone_22S = 5858
-    SAD_1969_96_UTM_Zone_23S = 5533
-    SIRGAS_2000_UTM_Zone_21S = 31981
-    SIRGAS_2000_UTM_Zone_22S = 31982
-    SIRGAS_2000_UTM_Zone_23S = 31983
-    South_America_Lambert_Conformal_Conic = 102015
-
-    def referenciaEspacial(self, projecao):
-        """Retorna o objeto referencial espacial apartir de uma Projeção
-
-        Args:
-            projecao (Projecao): Valor número correpondente ao EPSG
-        """
-        arcpy.SpatialReference(projecao)
-
 
 class Constantes:
 
@@ -267,51 +244,6 @@ class Constantes:
         }
 
 
-class Argumentos:
-    pString = {"datatype":"GPString","direction":"Input",}
-    pFeatureSelect = {"datatype":"GPFeatureLayer","direction":"Input",}
-
-
-class Variaveis:
-    usuarios_autorizados = [
-        'djalma.filho',
-        'maria7',
-        'desig',
-        'dflfilho',
-        ]
-    campos_string = [
-        ["Tipo de Ocorrência","tipo_de_ocorrencia", "Required"],
-        ["Propriedade","propriedade","Required"],
-        ["Latitude (min:-9.85   max:2.60)","latitude", "Required"],
-        ["Longitude (min:-46.05   max:-58.90)","longitude", "Required"],
-        ["Data da Ocorrência","data", "Required"],
-        ]
-    campos_gdb_select = [
-        ["Salvar no Banco de Dados em:","banco","Required"]
-        ]
-    campos_ajuda = [
-        [" ","_","Optional"]
-    ]
-
-    cs = campos_string
-    cgdbs = campos_gdb_select
-    ca = campos_ajuda
-
-    apfs = Argumentos.pFeatureSelect
-    apgdbs = Argumentos.pFeatureSelect
-    aps = Argumentos.pString
-
-    # Pra adicionar mais argumentos basta adicionar eles nos 'elementos'
-    # logo em seguinda adicionar a lista de agumentos 'largs'
-    # e a lista de campos 'lc'
-    elementos = cs + cgdbs + ca
-    largs = [aps, aps, aps]
-    lc = [cs, cgdbs, ca]
-
-
-    # super lista de argumentos agrupados de acordo com o numero de elementos presentes nos elementos
-    variaveis = list(zip(*elementos)[1]) # sintetizou dezenas de linhas
-    args = list(itertools.chain(*[[a]*len(c) for a, c in zip(largs, lc)]))
 
 class Geometria:
 
@@ -418,6 +350,94 @@ class Geometria:
 
 
 
+class TipoDeGeometria:
+    ponto = "POINT"
+    multiponto = "MULTIPOINT"
+    poligono = "POLYGON"
+    polilinha = "POLYLINE"
+
+
+
+class Projecao:
+    """Retorna o EPSG da Projecao"""
+
+    GCS_SIRGAS = 4170
+    GCS_WGS_1984 = 4326
+    GCS_South_American_1969 = 4618
+    GCS_SAD_1969_96 = 5527
+    SAD_1969_UTM_Zone_21S = 29191
+    SAD_1969_UTM_Zone_22S = 29192
+    SAD_1969_UTM_Zone_23S = 29193
+    SAD_1969_96_UTM_Zone_21S = 5531
+    SAD_1969_96_UTM_Zone_22S = 5858
+    SAD_1969_96_UTM_Zone_23S = 5533
+    SIRGAS_2000_UTM_Zone_21S = 31981
+    SIRGAS_2000_UTM_Zone_22S = 31982
+    SIRGAS_2000_UTM_Zone_23S = 31983
+    South_America_Lambert_Conformal_Conic = 102015
+
+    def referenciaEspacial(self, projecao):
+        """Retorna o objeto referencial espacial apartir de uma Projeção
+
+        Args:
+            projecao (Projecao): Valor número correpondente ao EPSG
+        """
+        arcpy.SpatialReference(projecao)
+
+
+
+class Argumentos:
+    pString = {"datatype":"GPString","direction":"Input",}
+    pFeatureSelect = {"datatype":"GPFeatureLayer","direction":"Input",}
+    diretorio_gdb = "C:\\Users\\{}\\Documents\\BancoDeDadosLocal\\Ocorrencias.gdb\\Poligonos\\MeusPoligonos".format(getpass.getuser())
+
+
+
+class Variaveis:
+    tipos_ocorrencias = [
+        'ROUBO DE FRUTO',texto("INDIGENA INVADINDO"),'ROUBO DE EQUIPAMENTO','OUTRO'
+        ]
+    usuarios_autorizados = [
+        'djalma.filho',
+        'maria7',
+        'desig',
+        'dflfilho',
+        ]
+    campos_string = [
+        ["Tipo de Ocorrência","tipo_de_ocorrencia", "Required"],
+        #["Propriedade","propriedade","Required"],
+        ["Latitude (min:-9.85   max:2.60) Formato: Grau Decimal","latitude", "Required"],
+        ["Longitude (min:-46.05   max:-58.90) Formato: Grau Decimal","longitude", "Required"],
+        ["Data da Ocorrência","data", "Required"],
+        ]
+    campos_gdb_select = [
+        ["Salvar no Banco de Dados em:","banco","Required"]
+        ]
+    campos_ajuda = [
+        ["Saída/Ajuda (Output)","ajuda","Optional"]
+    ]
+
+    cs = campos_string
+    cgdbs = campos_gdb_select
+    ca = campos_ajuda
+
+    apfs = Argumentos.pFeatureSelect
+    apgdbs = Argumentos.pFeatureSelect
+    aps = Argumentos.pString
+
+    # Pra adicionar mais argumentos basta adicionar eles nos 'elementos'
+    # logo em seguinda adicionar a lista de agumentos 'largs'
+    # e a lista de campos 'lc'
+    elementos = cs + cgdbs + ca
+    largs = [aps, aps, aps]
+    lc = [cs, cgdbs, ca]
+
+    # super lista de argumentos agrupados de acordo com o numero de elementos presentes nos elementos
+    variaveis = list(zip(*elementos)[1]) # sintetizou dezenas de linhas
+    args = list(itertools.chain(*[[a]*len(c) for a, c in zip(largs, lc)]))
+
+
+
 class Toolbox(object):
     def __init__(self):
         """Define the toolbox (the name of the toolbox is the name of the
@@ -445,17 +465,22 @@ class PlotagemOcorrencias(object):
         self.elementos = self.vars.elementos
 
     def getParameterInfo(self):
-        params= [ arcpy.Parameter(displayName=texto(i[0]),name=i[1],parameterType=i[2],**i[3]
+        params = [ arcpy.Parameter(displayName=texto(i[0]),name=i[1],parameterType=i[2],**i[3]
             ) for i in [e + [arg] for e, arg in zip(self.elementos, self.args)]]
         params[-2].value = Argumentos.diretorio_gdb
+        self.paraDict = { p.name:p for p in params }
+        self.paraDict['tipo_de_ocorrencia'].filter.list = self.vars.tipos_ocorrencias
         return params
 
     def isLicensed(self):
         return True if getpass.getuser() in self.vars.usuarios_autorizados else False
 
     def updateParameters(self, parameters):
-        return
-
+        # Dicionario de Parametros por nome
+        self.paraDict = { p.name:p for p in parameters }
+        if parameters[0].altered:
+            self.paraDict['ajuda'].value = self.paraDict['tipo_de_ocorrencia'].valueAsText
+            
     def updateMessages(self, parameters):
         return
 
