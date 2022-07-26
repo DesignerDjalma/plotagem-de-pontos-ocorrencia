@@ -10,13 +10,29 @@ DATA, DATE # DIA/MES/ANO 01/01/1999 - 31/12/2099
 POLO, STRING, 50
 
 
-args_string = {
+args_double = {
     "field_type":"DOUBLE",
     "field_precision":12,
     "field_scale":8,
     }
+args_long = {
+    "field_type":"LONG",
+    "field_precision":6,
+    }
+args_string = {
+    "field_type":"STRING",
+    "field_length":50,
+}
+args_date = {}
 
-campos_tda
+campos_tda = [
+    "Id", # LONG
+    "LAT_GD","LONG_GD", # DOUBLE
+    "LAT_GMS","LONG_GMS", # STRING
+    "TIPO_OCO","PROP", # STRING
+    "DATA", # DATE
+    "POLO", # STRING
+    ]
 
 arcpy.management.AddField(
     in_table=,
