@@ -394,9 +394,14 @@ class Argumentos:
 
 
 class Variaveis:
-    tipos_ocorrencias = [
-        'ROUBO DE FRUTO',texto("INDIGENA INVADINDO"),'ROUBO DE EQUIPAMENTO','OUTRO'
-        ]
+    tipos_ocorrencias = textoLista([
+        "Ameaça/Agressão",
+        "Bloqueio de Via",
+        "Crime Ambiental",
+        "Invasão",
+        "Roubo/Furto",
+        "Outros",
+        ])
     usuarios_autorizados = [
         'djalma.filho',
         'maria7',
