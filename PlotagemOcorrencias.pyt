@@ -1,5 +1,6 @@
 # Bibliotecas necessárias
 import getpass
+import itertools
 import re
 import arcpy
 import os
@@ -16,75 +17,6 @@ extend_para = {
     "YMax":"2.6002315813091905",
     "YMin":"-9.850358012309146"
 }
-
-class TipoDeGeometria:
-    ponto = "POINT"
-    multiponto = "MULTIPOINT"
-    poligono = "POLYGON"
-    polilinha = "POLYLINE"
-
-
-
-class Projecao:
-    """Retorna o EPSG da Projecao"""
-
-    GCS_SIRGAS = 4170
-    GCS_WGS_1984 = 4326
-    GCS_South_American_1969 = 4618
-    GCS_SAD_1969_96 = 5527
-    SAD_1969_UTM_Zone_21S = 29191
-    SAD_1969_UTM_Zone_22S = 29192
-    SAD_1969_UTM_Zone_23S = 29193
-    SAD_1969_96_UTM_Zone_21S = 5531
-    SAD_1969_96_UTM_Zone_22S = 5858
-    SAD_1969_96_UTM_Zone_23S = 5533
-    SIRGAS_2000_UTM_Zone_21S = 31981
-    SIRGAS_2000_UTM_Zone_22S = 31982
-    SIRGAS_2000_UTM_Zone_23S = 31983
-    South_America_Lambert_Conformal_Conic = 102015
-
-    def referenciaEspacial(self, projecao):
-        """Retorna o objeto referencial espacial apartir de uma Projeção
-
-        Args:
-            projecao (Projecao): Valor número correpondente ao EPSG
-        """
-        arcpy.SpatialReference(projecao)
-
-
-class ArgumentosParametros:
-    pString = {"datatype":"GPString","direction":"Input",}
-    pFeatureSelect = {"datatype":"GPFeatureLayer","direction":"Input",}
-
-class Constantes:
-
-    """Constantes necessarias para o projeto"""
- 
-    lLong = [ 'LONG' 		, 9, 0, 0 	]
-    lText = [ 'TEXT' 		, 0, 0, 254 ]
-    lDate = [ 'DATE' 		, 0, 0, 0 	]
-    lDouble=[ 'DOUBLE' 	    , 0, 0, 0 	]
-
-    operacoes_da_tabela_de_atributos = {0:{'OBJECTID':lLong},
-        1 :{ 'id'			:lLong},
-        2 :{ 'interessad'	:lText},
-        3 :{ 'imovel'		:lText},
-        4 :{ 'ano'			:lLong},
-        5 :{ 'processo'		:lLong},
-        6 :{ 'municipio'	:lText},
-        7 :{ 'parcela'		:lText},
-        8 :{ 'situacao'		:lText},
-        9 :{ 'georref'		:lText},
-        10:{ 'data'			:lDate},
-        11:{ 'complement'	:lText},
-        12:{ 'created_us'	:lText},
-        13:{ 'created_da'	:lDate},
-        14:{ 'last_edite'	:lDate},
-        15:{ 'last_edi_1'	:lDate},
-        16:{ 'Shape_Leng'	:lDouble},
-        17:{ 'Shape_Area'	:lDouble},
-        }
-
 
 
 ### FUNÇÕES ###
@@ -271,6 +203,115 @@ def zoom(mxd, camada, data_frame):
 
 
 
+class TipoDeGeometria:
+    ponto = "POINT"
+    multiponto = "MULTIPOINT"
+    poligono = "POLYGON"
+    polilinha = "POLYLINE"
+
+
+class Projecao:
+    """Retorna o EPSG da Projecao"""
+
+    GCS_SIRGAS = 4170
+    GCS_WGS_1984 = 4326
+    GCS_South_American_1969 = 4618
+    GCS_SAD_1969_96 = 5527
+    SAD_1969_UTM_Zone_21S = 29191
+    SAD_1969_UTM_Zone_22S = 29192
+    SAD_1969_UTM_Zone_23S = 29193
+    SAD_1969_96_UTM_Zone_21S = 5531
+    SAD_1969_96_UTM_Zone_22S = 5858
+    SAD_1969_96_UTM_Zone_23S = 5533
+    SIRGAS_2000_UTM_Zone_21S = 31981
+    SIRGAS_2000_UTM_Zone_22S = 31982
+    SIRGAS_2000_UTM_Zone_23S = 31983
+    South_America_Lambert_Conformal_Conic = 102015
+
+    def referenciaEspacial(self, projecao):
+        """Retorna o objeto referencial espacial apartir de uma Projeção
+
+        Args:
+            projecao (Projecao): Valor número correpondente ao EPSG
+        """
+        arcpy.SpatialReference(projecao)
+
+
+class Constantes:
+
+    """Constantes necessarias para o projeto"""
+ 
+    lLong = [ 'LONG' 		, 9, 0, 0 	]
+    lText = [ 'TEXT' 		, 0, 0, 254 ]
+    lDate = [ 'DATE' 		, 0, 0, 0 	]
+    lDouble=[ 'DOUBLE' 	    , 0, 0, 0 	]
+
+    operacoes_da_tabela_de_atributos = {0:{'OBJECTID':lLong},
+        1 :{ 'id'			:lLong},
+        2 :{ 'interessad'	:lText},
+        3 :{ 'imovel'		:lText},
+        4 :{ 'ano'			:lLong},
+        5 :{ 'processo'		:lLong},
+        6 :{ 'municipio'	:lText},
+        7 :{ 'parcela'		:lText},
+        8 :{ 'situacao'		:lText},
+        9 :{ 'georref'		:lText},
+        10:{ 'data'			:lDate},
+        11:{ 'complement'	:lText},
+        12:{ 'created_us'	:lText},
+        13:{ 'created_da'	:lDate},
+        14:{ 'last_edite'	:lDate},
+        15:{ 'last_edi_1'	:lDate},
+        16:{ 'Shape_Leng'	:lDouble},
+        17:{ 'Shape_Area'	:lDouble},
+        }
+
+
+class Argumentos:
+    pString = {"datatype":"GPString","direction":"Input",}
+    pFeatureSelect = {"datatype":"GPFeatureLayer","direction":"Input",}
+
+
+class Variaveis:
+    usuarios_autorizados = [
+        'djalma.filho',
+        'maria7',
+        'desig',
+        'dflfilho',
+        ]
+    campos_string = [
+        ["Tipo de Ocorrência","tipo_de_ocorrencia", "Required"],
+        ["Propriedade","propriedade","Required"],
+        ["Latitude (min:-9.85   max:2.60)","latitude", "Required"],
+        ["Longitude (min:-46.05   max:-58.90)","longitude", "Required"],
+        ["Data da Ocorrência","data", "Required"],
+        ]
+    campos_gdb_select = [
+        ["Salvar no Banco de Dados em:","banco","Required"]
+        ]
+    campos_ajuda = [
+        [" ","_","Optional"]
+    ]
+
+    cs = campos_string
+    cgdbs = campos_gdb_select
+    ca = campos_ajuda
+
+    apfs = Argumentos.pFeatureSelect
+    apgdbs = Argumentos.pFeatureSelect
+    aps = Argumentos.pString
+
+    # Pra adicionar mais argumentos basta adicionar eles nos 'elementos'
+    # logo em seguinda adicionar a lista de agumentos 'largs'
+    # e a lista de campos 'lc'
+    elementos = cs + cgdbs + ca
+    largs = [aps, aps, aps]
+    lc = [cs, cgdbs, ca]
+
+
+    # super lista de argumentos agrupados de acordo com o numero de elementos presentes nos elementos
+    variaveis = list(zip(*elementos)[1]) # sintetizou dezenas de linhas
+    args = list(itertools.chain(*[[a]*len(c) for a, c in zip(largs, lc)]))
 
 class Geometria:
 
@@ -391,26 +432,6 @@ class Toolbox(object):
 
 class PlotagemOcorrencias(object):
 
-    def definirVariaveis(self):
-
-        self.usuarios_autorizados = [
-            'djalma.filho',
-            'maria7',
-            'desig',
-            'dflfilho',
-        ]
-        self.campos_string = [
-            ["Tipo de Ocorrência","tipo_de_ocorrencia", "Required"],
-            ["Propriedade","propriedade","Required"],
-            ["Latitude (min:-9.85   max:2.60)","latitude", "Required"],
-            ["Longitude (min:-46.05   max:-58.90)","longitude", "Required"],
-            ["Data da Ocorrência","data", "Required"],
-            ]
-        self.campos_gdb = [
-            ["Salvar no Banco de Dados em:","banco","Required"]
-            ]
-
-
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
         self.label = "Plotagem de Coordenadas"
@@ -418,55 +439,27 @@ class PlotagemOcorrencias(object):
         self.canRunInBackground = False
         self.definirVariaveis()
 
-
-
-    def mostrarBoasVindas(self):
-        """Mostra uma janela pro usuário. Altamente Bugada. Não usar."""
-        MessageBox = ctypes.windll.user32.MessageBoxA
-        MessageBox(0, 'Ola Usuario!', 'Janela de Boas-Vindas', 0)
-
+    def definirVariaveis(self):
+        self.vars = Variaveis()
+        self.args = self.vars.args
+        self.elementos = self.vars.elementos
 
     def getParameterInfo(self):
-        """Define parameter definitions"""
-
-        ps = {
-            "datatype":"GPString",
-            "parameterType":"Required",
-            "direction":"Input",
-            }
-
-        # clever magic
-        params = [
-            arcpy.Parameter(displayName=texto(i[0]),name=i[1],**ps
-            ) for i in self.campos_string
-            ] + [
-            arcpy.Parameter(displayName=texto(i[0]),name=i[1],**
-            ) for i in self.campos_gdb
-            ]
-
-
+        params= [ arcpy.Parameter(displayName=texto(i[0]),name=i[1],parameterType=i[2],**i[3]
+            ) for i in [e + [arg] for e, arg in zip(self.elementos, self.args)]]
+        params[-2].value = Argumentos.diretorio_gdb
         return params
 
     def isLicensed(self):
-        if getpass.getuser() in self.usuarios_autorizados:
-            return True
-        else:
-            return False
+        return True if getpass.getuser() in self.vars.usuarios_autorizados else False
 
     def updateParameters(self, parameters):
-        """Modify the values and properties of parameters before internal
-        validation is performed.  This method is called whenever a parameter
-        has been changed."""
         return
 
     def updateMessages(self, parameters):
-        """Modify the messages created by internal validation for each tool
-        parameter.  This method is called after internal validation."""
         return
 
     def execute(self, parameters, messages):
-        """The source code of the tool."""
-
         for param in parameters:
             messages.addMessage(param.valueAsText)
 

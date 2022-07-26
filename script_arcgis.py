@@ -264,7 +264,6 @@ class Geometria:
         ponto = arcpy.Point(longitude, latitude)
         cursor = arcpy.da.InsertCursor(shape, ["SHAPE@"])
         cursor.insertRow([ponto])
-        
 referencia_espacial = ReferenciaEspacial.get(Projecao.GCS_SIRGAS_2000)
 tipo_de_geometria = TipoDeGeometria.ponto 
 diretorio_saida = r'C:\Users\djalma.filho\repositorios\plotagem-de-pontos-ocorrencia\outputShapes'
