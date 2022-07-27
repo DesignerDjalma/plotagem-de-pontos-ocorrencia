@@ -27,12 +27,17 @@ args_date = {}
 
 campos_tda = [
     "Id", # LONG
-    "LAT_GD","LONG_GD", # DOUBLE
-    "LAT_GMS","LONG_GMS", # STRING
-    "TIPO_OCO","PROP", # STRING
+    "LAT_GD",
+    "LONG_GD", # DOUBLE
+    "LAT_GMS",
+    "LONG_GMS", # STRING
+    "TIPO_OCO",
+    "PROP", # STRING
     "DATA", # DATE
     "POLO", # STRING
     ]
+
+
 
 arcpy.management.AddField(
     in_table=,

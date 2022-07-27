@@ -383,7 +383,7 @@ class Projecao:
             projecao (Projecao): Valor número correpondente ao EPSG
         """
         arcpy.SpatialReference(projecao)
-
+        
 
 
 class Argumentos:
@@ -470,8 +470,10 @@ class PlotagemOcorrencias(object):
         self.elementos = self.vars.elementos
 
     def getParameterInfo(self):
+
         params = [ arcpy.Parameter(displayName=texto(i[0]),name=i[1],parameterType=i[2],**i[3]
-            ) for i in [e + [arg] for e, arg in zip(self.elementos, self.args)]]
+        ) for i in [e + [arg] for e, arg in zip(self.elementos, self.args)]]
+
         params[-2].value = Argumentos.diretorio_gdb
         self.paraDict = { p.name:p for p in params }
         self.paraDict['tipo_de_ocorrencia'].filter.list = self.vars.tipos_ocorrencias
@@ -485,8 +487,7 @@ class PlotagemOcorrencias(object):
         self.paraDict = { p.name:p for p in parameters }
         if parameters[0].altered:
             self.paraDict['ajuda'].value = self.paraDict['tipo_de_ocorrencia'].valueAsText
-        if self.paraDict['situacao2'].altered:
-            parameters[-1].value = 'alterou'
+
 
 
     def updateMessages(self, parameters):
