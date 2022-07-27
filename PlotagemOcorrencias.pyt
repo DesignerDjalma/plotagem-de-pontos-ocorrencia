@@ -1,8 +1,11 @@
+# -*- encoding: utf-8 *-*
+
+
 # Bibliotecas necessárias
+# import arcpy
 import getpass
 import itertools
 import re
-import arcpy
 import os
 import sys
 import ctypes
@@ -383,7 +386,7 @@ class Projecao:
             projecao (Projecao): Valor número correpondente ao EPSG
         """
         arcpy.SpatialReference(projecao)
-        
+
 
 
 class Argumentos:
@@ -403,10 +406,7 @@ class Variaveis:
         "Outros",
         ])
     usuarios_autorizados = [
-        'djalma.filho',
-        'maria7',
-        'desig',
-        'dflfilho',
+        
         ]
     campos_string = [
         ["Tipo de Ocorrência","tipo_de_ocorrencia", "Required"],
@@ -425,18 +425,15 @@ class Variaveis:
     cs = campos_string
     cgdbs = campos_gdb_select
     ca = campos_ajuda
-
     apfs = Argumentos.pFeatureSelect
     apgdbs = Argumentos.pFeatureSelect
     aps = Argumentos.pString
-
     # Pra adicionar mais argumentos basta adicionar eles nos 'elementos'
     # logo em seguinda adicionar a lista de agumentos 'largs'
     # e a lista de campos 'lc'
     elementos = cs + cgdbs + ca
     largs = [aps, aps, aps]
     lc = [cs, cgdbs, ca]
-
     # super lista de argumentos agrupados de acordo com o numero de elementos presentes nos elementos
     variaveis = list(zip(*elementos)[1]) # sintetizou dezenas de linhas
     args = list(itertools.chain(*[[a]*len(c) for a, c in zip(largs, lc)]))
@@ -449,7 +446,6 @@ class Toolbox(object):
         .pyt file)."""
         self.label = texto("Plotadem de Pontos Ocorrência")
         self.alias = ""
-
         # List of tool classes associated with this toolbox
         self.tools = [PlotagemOcorrencias]
 
@@ -464,16 +460,16 @@ class PlotagemOcorrencias(object):
         self.canRunInBackground = False
         self.definirVariaveis()
 
+
     def definirVariaveis(self):
         self.vars = Variaveis()
         self.args = self.vars.args
         self.elementos = self.vars.elementos
 
-    def getParameterInfo(self):
 
+    def getParameterInfo(self):
         params = [ arcpy.Parameter(displayName=texto(i[0]),name=i[1],parameterType=i[2],**i[3]
         ) for i in [e + [arg] for e, arg in zip(self.elementos, self.args)]]
-
         params[-2].value = Argumentos.diretorio_gdb
         self.paraDict = { p.name:p for p in params }
         self.paraDict['tipo_de_ocorrencia'].filter.list = self.vars.tipos_ocorrencias
@@ -496,5 +492,5 @@ class PlotagemOcorrencias(object):
     def execute(self, parameters, messages):
         for param in parameters:
             messages.addMessage(param.valueAsText)
-
         return
+

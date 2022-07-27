@@ -49,8 +49,7 @@ class Campos:
     c1 = [["Tipo de Ocorrência","tipo_de_ocorrencia", "Required"],
             Argumentos.checkBoxes]
 
-    c2 = [["Tipo de Ocorrência","tipo_de_ocorrencia", "Required"],
-          ["Latitude (min:-9.85   max:2.60) Formato: Grau Decimal","latitude", "Required"],
+    c2 = [["Latitude (min:-9.85   max:2.60) Formato: Grau Decimal","latitude", "Required"],
           ["Longitude (min:-46.05   max:-58.90) Formato: Grau Decimal","longitude", "Required"],
           ["Propriedade","propriedade","Required"],
           ["Data da Ocorrência","data", "Required"],
@@ -76,25 +75,21 @@ class Parametros:
         self.campos = Campos()
 
     def setup(self):
-        elementos = []
-        argumentos = []
-
+        parametros = []
         for i in inspect.getmembers(self.campos):
             if not i[0].startswith("_"):
-                setattr(self, i[0], i[1][:-1])
-                elementos = elementos + i[1][:-1]
-                argumentos = argumentos + [i[1][-1]] # somente o -1
-
-        lc = [j for i in elementos for j in i]
-        largs = [j for i in argumentos for j in i]
-        
-        variaveis = list(zip(*elementos)[1]) 
-        args = list(itertools.chain(*[[a]*len(c) for a, c in zip(largs, lc)]))
-
-        params = [ arcpy.Parameter(displayName=texto(i[0]),name=i[1], parameterType=i[2], **i[3]
-        ) for i in [e + [arg] for e, arg in zip(elementos, args)]]
-
-        return params
+                print(i)
+                p = i[1][0]
+                if len(p) > 1:
+                    for j in p:
+                        parametros.append(
+                            arcpy.Parameter(displayName=texto(j[0]),name=j[1], parameterType=j[2], **i[1][-1])
+                        )
+                else:
+                    parametros.append(
+                            arcpy.Parameter(displayName=texto(p[0]),name=p[1], parameterType=p[2], **i[1][-1])
+                        )
+        return parametros
 
 
 
@@ -123,7 +118,6 @@ class PlotagemOcorrencias(object):
         self.label = "Plotagem de Coordenadas"
         self.description = texto("Esse é o Python Toolbox definitivo que será criado a ferramenta para plotagem de pontos")
         self.canRunInBackground = False
-        self.definirVariaveis()
 
     def getParameterInfo(self):
         parametros = Parametros()
@@ -167,23 +161,27 @@ if __name__ == "__main__":
 
     print('Iniciando Testes')
 
-    teste = Teste()
-    campos = Campos()
-    elementos = []
+    # teste = Teste()
+    # campos = Campos()
+    # elementos = []
 
-    # SETANDO TODOS OS ATRIBUTOS DE UMA CLASSE EM OUTRA
-    # ASSIM COMO FAZER UMA SUPER LISTA
-    for i in inspect.getmembers(campos):
-        if not i[0].startswith("_"):
-            nome = i[0]
-            valor = i[1][:-1]
-            setattr(teste, nome, valor)
-            elementos = elementos + valor
+    # # SETANDO TODOS OS ATRIBUTOS DE UMA CLASSE EM OUTRA
+    # # ASSIM COMO FAZER UMA SUPER LISTA
+    # for i in inspect.getmembers(campos):
+    #     if not i[0].startswith("_"):
+    #         nome = i[0]
+    #         valor = i[1][:-1]
+    #         setattr(teste, nome, valor)
+    #         elementos = elementos + valor
     
-    print("ATRIBUTOS DE TESTE")
-    for i in inspect.getmembers(campos):
-        if not i[0].startswith("_"):
-            print(i)
+    # print("ATRIBUTOS DE TESTE")
+    # for i in inspect.getmembers(campos):
+    #     if not i[0].startswith("_"):
+    #         print(i)
 
-    print("\nA SUPER LISTA\n")
-    print(elementos)
+    # print("\nA SUPER LISTA\n")
+    # print(elementos)
+
+    parametros = Parametros()
+    params = parametros.setup()
+
