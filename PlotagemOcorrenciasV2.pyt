@@ -25,6 +25,9 @@ def textoLista(lista):
     return [texto(i) for i in lista]
 
 
+class Textos:
+    apresentacao = "Esse é o Python Toolbox definitivo que será criado a ferramenta para plotagem de pontos"
+
 
 class Caminhos:
 
@@ -138,7 +141,7 @@ class PlotagemOcorrencias(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
         self.label = "Plotagem de Coordenadas"
-        self.description = texto("Esse é o Python Toolbox definitivo que será criado a ferramenta para plotagem de pontos")
+        self.description = texto(Textos.apresentacao)
         self.canRunInBackground = False
 
     def getParameterInfo(self):
