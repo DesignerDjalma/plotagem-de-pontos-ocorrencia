@@ -485,7 +485,10 @@ class PlotagemOcorrencias(object):
         self.paraDict = { p.name:p for p in parameters }
         if parameters[0].altered:
             self.paraDict['ajuda'].value = self.paraDict['tipo_de_ocorrencia'].valueAsText
-            
+        if self.paraDict['situacao2'].altered:
+            parameters[-1].value = 'alterou'
+
+
     def updateMessages(self, parameters):
         return
 
