@@ -16,21 +16,25 @@ sys.setdefaultencoding("utf-8")
 # formatador de texto
 def texto(txt):
     """Recebe uma string e formata ao padrão utf-8"""
+
     return txt.encode('cp1252')
 
 def textoLista(lista):
     """Recebe uma lista e formata ao padrão utf-8"""
+
     return [texto(i) for i in lista]
 
 
 
 class Caminhos:
+
     """Caminhos utilizados na ToolBox."""
 
     diretorio_gdb = "C:\\Users\\{}\\Documents\\BancoDeDadosLocal\\Ocorrencias.gdb\\Poligonos\\MeusPoligonos".format(getpass.getuser())
 
 
 class Argumentos:
+
     """Argumentos usados para criar os parametros.
     
     Atributos:
@@ -43,7 +47,10 @@ class Argumentos:
     featureLayer = {"datatype":"GPFeatureLayer", "direction":"Input"}
     checkBoxes = {"datatype":"GPString", "direction":"Input"}
 
+
+
 class Campos:
+
     """Definição dos Campos que ficaram dentro."""
 
     c1 = [["Tipo de Ocorrência","tipo_de_ocorrencia", "Required"],
@@ -61,16 +68,30 @@ class Campos:
     c4 = [["Saída/Ajuda (Output)","ajuda","Optional"],
             Argumentos.string]
 
+
+
 class Validacao:
-    usuariosPermitidos = [
-        'djalma.filho',
-        'maria7',
-        'desig',
-        'dflfilho',
-        ]
+
+    """Responsável por Validar a execução do Programa."""
+    
+    @staticmethod
+    def verificar():
+        usuariosPermitidos = [
+            'djalma.filho',
+            'maria7',
+            'desig',
+            'dflfilho',]
+
+        user = getpass.getuser()
+        allowed = usuariosPermitidos
+        return True if user in allowed else False
+
 
 
 class Parametros:
+
+    """Responsável por recursivamente criar Parametros."""
+
     def __init__(self):
         self.campos = Campos()
 
@@ -78,26 +99,27 @@ class Parametros:
         parametros = []
         for i in inspect.getmembers(self.campos):
             if not i[0].startswith("_"):
-                print(i)
                 p = i[1][0]
-                if len(p) > 1:
+                if len(i) > 2:
                     for j in p:
                         parametros.append(
-                            arcpy.Parameter(displayName=texto(j[0]),name=j[1], parameterType=j[2], **i[1][-1])
+                            arcpy.Parameter(
+                            displayName=texto(j[0]),
+                            name=j[1],
+                            parameterType=j[2],
+                            **i[1][-1]
+                            )
                         )
                 else:
                     parametros.append(
-                            arcpy.Parameter(displayName=texto(p[0]),name=p[1], parameterType=p[2], **i[1][-1])
+                        arcpy.Parameter(
+                            displayName=texto(p[0]),
+                            name=p[1],
+                            parameterType=p[2],
+                            **i[1][-1]
                         )
+                    )
         return parametros
-
-
-
-
-
-
-
-
 
 
 
@@ -125,9 +147,7 @@ class PlotagemOcorrencias(object):
         return params
 
     def isLicensed(self):
-        user = getpass.getuser()
-        allowed = Validacao.usuariosPermitidos
-        return True if user in allowed else False
+        return Validacao.verificar()
 
     def updateParameters(self, parameters):
         pass
@@ -136,52 +156,13 @@ class PlotagemOcorrencias(object):
         return
 
     def execute(self, parameters, messages):
-
         return
 
-class Teste:
-    atributo_1 = "texto"
-    atributo_2 = 999
-    atributo_3 = ['a','b','c']
+
 
 
 if __name__ == "__main__":
-    # setattr(objeto, 'nome', 'valor')
-    # getattr(objeto, 'nome')
-
-    # t = Teste()
-    # setattr(t, 'novo_atributo', ['lista','de','string'])
-
-
-    # Para poder mudar um atributo é necessario instanciar a classe
-    # for i in inspect.getmembers(t):
-    #     if not i[0].startswith("_"):
-    #         print(i)
-
-
-    print('Iniciando Testes')
-
-    # teste = Teste()
-    # campos = Campos()
-    # elementos = []
-
-    # # SETANDO TODOS OS ATRIBUTOS DE UMA CLASSE EM OUTRA
-    # # ASSIM COMO FAZER UMA SUPER LISTA
-    # for i in inspect.getmembers(campos):
-    #     if not i[0].startswith("_"):
-    #         nome = i[0]
-    #         valor = i[1][:-1]
-    #         setattr(teste, nome, valor)
-    #         elementos = elementos + valor
-    
-    # print("ATRIBUTOS DE TESTE")
-    # for i in inspect.getmembers(campos):
-    #     if not i[0].startswith("_"):
-    #         print(i)
-
-    # print("\nA SUPER LISTA\n")
-    # print(elementos)
-
     parametros = Parametros()
     params = parametros.setup()
+    
 

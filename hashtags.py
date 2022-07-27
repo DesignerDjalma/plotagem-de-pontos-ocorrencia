@@ -30,3 +30,40 @@
 
         # params = [ arcpy.Parameter(displayName=texto(i[0]),name=i[1], parameterType=i[2], **i[3]
         #     ) for i in parametroEtipo]
+
+                        # print("parametros.append(arcpy.Parameter(displayName=texto{},name={}, parameterType={}, **{}))".format(j[0],j[1],j[2],i[1][-1]))
+# setattr(objeto, 'nome', 'valor')
+    # getattr(objeto, 'nome')
+
+    # t = Teste()
+    # setattr(t, 'novo_atributo', ['lista','de','string'])
+
+
+    # Para poder mudar um atributo é necessario instanciar a classe
+    # for i in inspect.getmembers(t):
+    #     if not i[0].startswith("_"):
+    #         print(i)
+
+
+    # print('Iniciando Testes')
+
+    # teste = Teste()
+    # campos = Campos()
+    # elementos = []
+
+    # # SETANDO TODOS OS ATRIBUTOS DE UMA CLASSE EM OUTRA
+    # # ASSIM COMO FAZER UMA SUPER LISTA
+    # for i in inspect.getmembers(campos):
+    #     if not i[0].startswith("_"):
+    #         nome = i[0]
+    #         valor = i[1][:-1]
+    #         setattr(teste, nome, valor)
+    #         elementos = elementos + valor
+    
+    # print("ATRIBUTOS DE TESTE")
+    # for i in inspect.getmembers(campos):
+    #     if not i[0].startswith("_"):
+    #         print(i)
+
+    # print("\nA SUPER LISTA\n")
+    # print(elementos)
