@@ -118,6 +118,26 @@ class Parametros:
         return pd
 
 
+class Ocorrencias:
+    tipos = textoLista([
+        "Ameaça/Agressão",
+        "Bloqueio de Via",
+        "Crime Ambiental",
+        "Invasão",
+        "Roubo/Furto",
+        "Outros",
+        ])
+    colunas_tabela = [
+            ['GPString', 'NOME DO PONTO'],
+            ['GPString', 'LATITUDE ( min: - 9.85   max: 2.60 ) '],
+            ['GPString', 'LONGITUDE ( max: - 46.05   min: - 58.90 )' ]
+            ]
+
+
+class Informacoes:
+    def salvar(valores):
+        with open('C:\Banco_de_Dados_Ferramenta\INFO.txt', 'w') as f:
+            f.write(valores)
 
 
 class Validacao:
@@ -135,21 +155,6 @@ class Validacao:
         allowed = usuariosPermitidos
         return True if user in allowed else False
 
-
-class Ocorrencias:
-    tipos = textoLista([
-        "Ameaça/Agressão",
-        "Bloqueio de Via",
-        "Crime Ambiental",
-        "Invasão",
-        "Roubo/Furto",
-        "Outros",
-        ])
-    colunas_tabela = [
-            ['GPString', 'NOME DO PONTO'],
-            ['GPString', 'LATITUDE ( min: - 9.85   max: 2.60 ) '],
-            ['GPString', 'LONGITUDE ( max: - 46.05   min: - 58.90 )' ]
-            ]
 
 
 
@@ -178,7 +183,8 @@ class PlotagemOcorrencias(object):
         return Validacao.autenticar()
 
     def updateParameters(self, parameters):
-        pass
+        pd = {p.name:p for p in parameters}
+        pd['saida'].value = pd['latitude'].valueAsText
 
     def updateMessages(self, parameters):
         return
