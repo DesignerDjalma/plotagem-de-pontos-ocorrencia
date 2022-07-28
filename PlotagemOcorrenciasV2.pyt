@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
+from ast import alias
 import arcpy
 import getpass
 import itertools
@@ -13,20 +14,29 @@ reload(sys) # ignore o erro
 sys.setdefaultencoding("utf-8")
 
 
-# formatador de texto
-def texto(txt):
-    """Recebe uma string e formata ao padrão utf-8"""
+# FUNÇÕES
 
+
+def texto(txt):
+    """Recebe uma string e formata ao padrão utf-8."""
     return txt.encode('cp1252')
 
-def textoLista(lista):
-    """Recebe uma lista e formata ao padrão utf-8"""
 
+def textoLista(lista):
+    """Recebe uma lista e formata ao padrão utf-8."""
     return [texto(i) for i in lista]
 
 
+# CLASSES #
+
+
+
 class Textos:
-    apresentacao = "Esse é o Python Toolbox definitivo que será criado a ferramenta para plotagem de pontos"
+    tblabel = texto("Plotadem de Pontos Ocorrência")
+    tbalias = texto("plotagemOcorrencias")
+    titulo = texto("Plotagem de Coordenadas")
+    apresentacao = texto("Esse é o Python Toolbox definitivo que será criado a ferramenta para plotagem de pontos")
+
 
 
 class Caminhos:
@@ -34,6 +44,7 @@ class Caminhos:
     """Caminhos utilizados na ToolBox."""
 
     diretorio_gdb = "C:\\Users\\{}\\Documents\\BancoDeDadosLocal\\Ocorrencias.gdb\\Poligonos\\MeusPoligonos".format(getpass.getuser())
+
 
 
 class Argumentos:
@@ -98,8 +109,7 @@ class Parametros:
         self.campos = Campos()
 
     def setup(self):
-        """Define recursivamente todos os Parametros baseado nos Campos"""
-        
+        """Define recursivamente todos os Parametros baseado nos Campos."""
         parametros = []
         for i in inspect.getmembers(self.campos):
             if not i[0].startswith("_"):
@@ -115,15 +125,16 @@ class Parametros:
 
 class Toolbox(object):
     def __init__(self):
-        self.label = texto("Plotadem de Pontos Ocorrência")
-        self.alias = "plotagemOcorrencias"
+        self.label =  Textos.tblabel
+        self.alias =  Textos.tbalias
         self.tools = [PlotagemOcorrencias]
+
 
 
 class PlotagemOcorrencias(object):
     def __init__(self):
-        self.label = "Plotagem de Coordenadas"
-        self.description = texto(Textos.apresentacao)
+        self.label = Textos.titulo
+        self.description = Textos.apresentacao
         self.canRunInBackground = False
 
     def getParameterInfo(self):
@@ -142,6 +153,7 @@ class PlotagemOcorrencias(object):
 
     def execute(self, parameters, messages):
         return
+
 
 
 
