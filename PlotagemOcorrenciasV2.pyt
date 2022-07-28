@@ -59,7 +59,7 @@ class Argumentos:
 
     string = {"datatype":"GPString", "direction":"Input"}
     featureLayer = {"datatype":"GPFeatureLayer", "direction":"Input"}
-    checkBoxes = {"datatype":"GPString", "direction":"Input"}
+    checkBoxes = {"datatype":"GPString", "direction":"Input", "multiValue":True}
 
 
 
@@ -67,11 +67,12 @@ class Campos:
 
     """Definição dos Campos que ficaram dentro."""
 
-    c1 = [["Tipo de Ocorrência","tipo_de_ocorrencia", "Required"],
+    c1 = [["Tipo de Ocorrência. (Selecione apenas uma alternativa)","tipo_de_ocorrencia", "Required"],
             Argumentos.checkBoxes]
 
-    c2 = [["Latitude (min:-9.85   max:2.60) Formato: Grau Decimal","latitude", "Required"],
-          ["Longitude (min:-46.05   max:-58.90) Formato: Grau Decimal","longitude", "Required"],
+    c2 = [
+          [" LATITUDE [ N-Y ]. Formato: Grau Decimal. ( Valores: min: - 9.85   max: 2.60 )                       | Utilizar ponto como separador decimal", "latitude","Required"],
+          ["LONGITUDE [ E-X ]. Formato: Grau Decimal. ( Valores: max: - 46.05   min: - 58.90 )               | Utilizar ponto como separador decimal","longitude","Required"],
           ["Propriedade","propriedade","Required"],
           ["Data da Ocorrência","data", "Required"],
             Argumentos.string]
@@ -79,8 +80,38 @@ class Campos:
     c3 = [["Salvar no Banco de Dados em:","banco","Required"],
             Argumentos.featureLayer]
 
-    c4 = [["Saída/Ajuda (Output)","ajuda","Optional"],
+    c4 = [["Saída/Ajuda (Output)","saida","Optional"],
             Argumentos.string]
+
+
+class Parametros:
+
+    """Responsável por recursivamente criar Parametros."""
+
+    def __init__(self):
+        self.campos = Campos()
+
+    def get(self):
+        """Define recursivamente todos os Parametros baseado nos Campos."""
+        parametros = []
+        for i in inspect.getmembers(self.campos):
+            if not i[0].startswith("_"):
+                nome_var = i[0]
+                lista_variante = i[1]
+                argumento = i[1][-1]
+                for j in lista_variante:
+                    if j != argumento:
+                        parametros.append(arcpy.Parameter(displayName=texto(j[0]),name=j[1],parameterType=j[2],**argumento))
+        return parametros
+
+    
+
+    def setup(self, params):
+        pd = { p.name:p for p in params } # setting dict
+        pd['banco'].value = Caminhos.diretorio_gdb
+        pd['tipo_de_ocorrencia'].filter.list = Ocorrencias.tipos
+        return pd
+
 
 
 
@@ -101,37 +132,15 @@ class Validacao:
 
 
 class Ocorrencias:
-    tipos = [
-        'a'
-    ]
+    tipos = textoLista([
+        "Ameaça/Agressão",
+        "Bloqueio de Via",
+        "Crime Ambiental",
+        "Invasão",
+        "Roubo/Furto",
+        "Outros",
+        ])
 
-
-class Parametros:
-
-    """Responsável por recursivamente criar Parametros."""
-
-    def __init__(self):
-        self.campos = Campos()
-
-    def get(self):
-        """Define recursivamente todos os Parametros baseado nos Campos."""
-        parametros = []
-        for i in inspect.getmembers(self.campos):
-            if not i[0].startswith("_"):
-                p = i[1][0]
-                if len(i) > 2:
-                    for j in p:
-                        parametros.append(arcpy.Parameter(displayName=texto(j[0]),name=j[1],parameterType=j[2],**i[1][-1]))
-                else:
-                    parametros.append(arcpy.Parameter(displayName=texto(p[0]),name=p[1],parameterType=p[2],**i[1][-1]))
-        return parametros
-    
-    @staticmethod
-    def setup(params):
-        pd = { p.name:p for p in params } # setting dict
-        pd['banco'].value = Argumentos.diretorio_gdb
-        pd['tipo_de_ocorrencia'].filter.list = .vars.situacao
-        pass
 
 
 class Toolbox(object):
@@ -172,8 +181,18 @@ class PlotagemOcorrencias(object):
 
 
 if __name__ == "__main__":
-    parametros = Parametros()
-    params = parametros.setup()
 
-    
+    # parametros = Parametros()
+    # params = parametros.get()
+    # pd = parametros.setup(params)
+
+    # print(type(params))
+    # print(params)
+    # print(type(pd))
+    # print(pd)
+    campos = Campos()
+    print('\n'*3)
+    for i in inspect.getmembers(campos):
+        if not i[0].startswith("_"):
+            print(i)
 
