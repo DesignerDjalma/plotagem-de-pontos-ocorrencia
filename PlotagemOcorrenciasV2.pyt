@@ -100,6 +100,11 @@ class Validacao:
         return True if user in allowed else False
 
 
+class Ocorrencias:
+    tipos = [
+        'a'
+    ]
+
 
 class Parametros:
 
@@ -108,7 +113,7 @@ class Parametros:
     def __init__(self):
         self.campos = Campos()
 
-    def setup(self):
+    def get(self):
         """Define recursivamente todos os Parametros baseado nos Campos."""
         parametros = []
         for i in inspect.getmembers(self.campos):
@@ -120,7 +125,13 @@ class Parametros:
                 else:
                     parametros.append(arcpy.Parameter(displayName=texto(p[0]),name=p[1],parameterType=p[2],**i[1][-1]))
         return parametros
-
+    
+    @staticmethod
+    def setup(params):
+        pd = { p.name:p for p in params } # setting dict
+        pd['banco'].value = Argumentos.diretorio_gdb
+        pd['tipo_de_ocorrencia'].filter.list = .vars.situacao
+        pass
 
 
 class Toolbox(object):
@@ -139,7 +150,9 @@ class PlotagemOcorrencias(object):
 
     def getParameterInfo(self):
         parametros = Parametros()
-        params = parametros.setup()
+        params = parametros.get()
+        parametros.setup(params)
+
         return params
 
     def isLicensed(self):
