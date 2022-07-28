@@ -71,10 +71,11 @@ class Campos:
             Argumentos.checkBoxes]
 
     c2 = [
-          [" LATITUDE [ N-Y ]. Formato: Grau Decimal. ( Valores: min: - 9.85   max: 2.60 )                       | Utilizar ponto como separador decimal", "latitude","Required"],
-          ["LONGITUDE [ E-X ]. Formato: Grau Decimal. ( Valores: max: - 46.05   min: - 58.90 )               | Utilizar ponto como separador decimal","longitude","Required"],
-          ["Propriedade","propriedade","Required"],
-          ["Data da Ocorrência","data", "Required"],
+          [" NOME DO PONTO || LATITUDE (NY) || LONGITUDE (EX) || Formato: Grau Decimal com PONTO como separador decimal ", "latitude","Required"],
+          #[" LATITUDE [ N-Y ]. Formato: Grau Decimal. ( Valores: min: - 9.85   max: 2.60 )                       | Utilizar ponto como separador decimal", "latitude","Required"],
+          #["LONGITUDE [ E-X ]. Formato: Grau Decimal. ( Valores: max: - 46.05   min: - 58.90 )               | Utilizar ponto como separador decimal","longitude","Required"],
+          ["Propriedade","propriedade","Optional"],
+          ["Data da Ocorrência | Formato: DD/MM/AAAA. Ex.: 01/01/2000 -> 31/12/2022","data", "Required"],
             Argumentos.string]
 
     c3 = [["Salvar no Banco de Dados em:","banco","Required"],
@@ -110,6 +111,10 @@ class Parametros:
         pd = { p.name:p for p in params } # setting dict
         pd['banco'].value = Caminhos.diretorio_gdb
         pd['tipo_de_ocorrencia'].filter.list = Ocorrencias.tipos
+        pd['latitude'].columns = Ocorrencias.colunas_tabela
+        pd['latitude'].filters[1].type = 'GPString'
+        pd['latitude'].filters[2].type = 'GPString'
+
         return pd
 
 
@@ -140,6 +145,11 @@ class Ocorrencias:
         "Roubo/Furto",
         "Outros",
         ])
+    colunas_tabela = [
+            ['GPString', 'NOME DO PONTO'],
+            ['GPString', 'LATITUDE ( min: - 9.85   max: 2.60 ) '],
+            ['GPString', 'LONGITUDE ( max: - 46.05   min: - 58.90 )' ]
+            ]
 
 
 
