@@ -67,3 +67,27 @@
 
     # print("\nA SUPER LISTA\n")
     # print(elementos)
+
+     # parametros = []
+        # for i in inspect.getmembers(self.campos):
+        #     if not i[0].startswith("_"):
+        #         p = i[1][0]
+        #         if len(i) > 2:
+        #             for j in p:
+        #                 parametros.append(
+        #                     arcpy.Parameter(
+        #                     displayName=texto(j[0]),
+        #                     name=j[1],
+        #                     parameterType=j[2],
+        #                     **i[1][-1]
+        #                     )
+        #                 )
+        #         else:
+        #             parametros.append(
+        #                 arcpy.Parameter(
+        #                     displayName=texto(p[0]),
+        #                     name=p[1],
+        #                     parameterType=p[2],
+        #                     **i[1][-1]
+        #                 )
+        #             )

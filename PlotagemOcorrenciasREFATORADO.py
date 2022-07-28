@@ -23,7 +23,6 @@ def textoLista(lista):
     return [texto(i) for i in lista]
 
 
-
 class Caminhos:
     """Caminhos utilizados na ToolBox."""
 
@@ -42,6 +41,7 @@ class Argumentos:
     string = {"datatype":"GPString", "direction":"Input"}
     featureLayer = {"datatype":"GPFeatureLayer", "direction":"Input"}
     checkBoxes = {"datatype":"GPString", "direction":"Input"}
+
 
 class Campos:
     """Definição dos Campos que ficaram dentro."""
@@ -62,13 +62,20 @@ class Campos:
     c4 = [["Saída/Ajuda (Output)","ajuda","Optional"],
             Argumentos.string]
 
+
 class Validacao:
-    usuariosPermitidos = [
-        'djalma.filho',
-        'maria7',
-        'desig',
-        'dflfilho',
-        ]
+    
+    """Responsável por Autenticar a ferramenta."""
+    
+    @staticmethod
+    def autenticar():
+        usuariosPermitidos = [
+            'djalma.filho','dflfilho',
+            'maria7','desig',
+            ]
+        user = getpass.getuser()
+        allowed = usuariosPermitidos
+        return True if user in allowed else False
 
 
 class Parametros:
@@ -98,14 +105,6 @@ class Parametros:
 
 
 
-
-
-
-
-
-
-
-
 class Toolbox(object):
     def __init__(self):
         """Define the toolbox (the name of the toolbox is the name of the
@@ -131,9 +130,7 @@ class PlotagemOcorrencias(object):
         return params
 
     def isLicensed(self):
-        user = getpass.getuser()
-        allowed = Validacao.usuariosPermitidos
-        return True if user in allowed else False
+        return Validacao.autenticar
 
     def updateParameters(self, parameters):
         pass
@@ -142,13 +139,15 @@ class PlotagemOcorrencias(object):
         return
 
     def execute(self, parameters, messages):
-
         return
+
+
 
 class Teste:
     atributo_1 = "texto"
     atributo_2 = 999
     atributo_3 = ['a','b','c']
+
 
 
 if __name__ == "__main__":

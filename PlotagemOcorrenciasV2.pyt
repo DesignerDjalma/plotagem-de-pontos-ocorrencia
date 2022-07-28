@@ -78,13 +78,12 @@ class Validacao:
     """Responsável por Validar a execução do Programa."""
     
     @staticmethod
-    def verificar():
+    def autenticar():
         usuariosPermitidos = [
             'djalma.filho',
             'maria7',
             'desig',
             'dflfilho',]
-
         user = getpass.getuser()
         allowed = usuariosPermitidos
         return True if user in allowed else False
@@ -99,47 +98,30 @@ class Parametros:
         self.campos = Campos()
 
     def setup(self):
+        """Define recursivamente todos os Parametros baseado nos Campos"""
+        
         parametros = []
         for i in inspect.getmembers(self.campos):
             if not i[0].startswith("_"):
                 p = i[1][0]
                 if len(i) > 2:
                     for j in p:
-                        parametros.append(
-                            arcpy.Parameter(
-                            displayName=texto(j[0]),
-                            name=j[1],
-                            parameterType=j[2],
-                            **i[1][-1]
-                            )
-                        )
+                        parametros.append(arcpy.Parameter(displayName=texto(j[0]),name=j[1],parameterType=j[2],**i[1][-1]))
                 else:
-                    parametros.append(
-                        arcpy.Parameter(
-                            displayName=texto(p[0]),
-                            name=p[1],
-                            parameterType=p[2],
-                            **i[1][-1]
-                        )
-                    )
+                    parametros.append(arcpy.Parameter(displayName=texto(p[0]),name=p[1],parameterType=p[2],**i[1][-1]))
         return parametros
 
 
 
 class Toolbox(object):
     def __init__(self):
-        """Define the toolbox (the name of the toolbox is the name of the
-        .pyt file)."""
         self.label = texto("Plotadem de Pontos Ocorrência")
-        self.alias = ""
-        # List of tool classes associated with this toolbox
+        self.alias = "plotagemOcorrencias"
         self.tools = [PlotagemOcorrencias]
-
 
 
 class PlotagemOcorrencias(object):
     def __init__(self):
-        """Define the tool (tool name is the name of the class)."""
         self.label = "Plotagem de Coordenadas"
         self.description = texto(Textos.apresentacao)
         self.canRunInBackground = False
@@ -150,7 +132,7 @@ class PlotagemOcorrencias(object):
         return params
 
     def isLicensed(self):
-        return Validacao.verificar()
+        return Validacao.autenticar()
 
     def updateParameters(self, parameters):
         pass
@@ -167,5 +149,6 @@ class PlotagemOcorrencias(object):
 if __name__ == "__main__":
     parametros = Parametros()
     params = parametros.setup()
+
     
 
