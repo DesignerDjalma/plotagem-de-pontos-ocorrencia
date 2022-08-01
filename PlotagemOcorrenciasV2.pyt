@@ -27,6 +27,27 @@ def textoLista(lista):
     return [texto(i) for i in lista]
 
 
+
+
+
+# 100%
+def atualiza_ultima_linha_tda(nome_da_camada, nome_da_coluna, valor_novo, valor_antigo=' '):
+    """Atualiza o ultimo shape criado na tabela de atributos se o mesmo estiver vazio."""
+
+    mxd = arcpy.mapping.MapDocument("CURRENT")
+    cmds = arcpy.mapping.ListLayers(mxd)
+    d = {i.name:i for i in cmds}
+
+    with arcpy.da.UpdateCursor(d[nome_da_camada], [nome_da_coluna]) as cursor:
+        for row in cursor:
+            if row[0] == valor_antigo:
+                row[0] = valor_novo
+                cursor.updateRow(row)
+
+
+
+
+
 # CLASSES #
 
 
