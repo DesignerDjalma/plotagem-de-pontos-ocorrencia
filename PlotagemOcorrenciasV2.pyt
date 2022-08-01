@@ -28,6 +28,41 @@ def textoLista(lista):
 
 
 
+def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
+    """Pega a lista que é gerada do quadro e tranforma em multipontos"""
+
+    # A list of features and coordinate pairs
+    # feature_info = [
+    #     [ [1, 2], [2, 4], [3, 7] ],  # lista de pontos = 1 feature
+    #     [ [6, 8], [5, 7], [7, 2], [9, 5] ], # lista de pontos = 1 feature
+    #     ] # a lista maior # 
+
+    ldc = lista_de_pontos_quadro
+    l_ldc = ldc.split(';')
+    l_l_ldc = [ i.split(' ')[1:] for i in l_ldc ]
+
+    for j in range(2):
+        for i in range(len(l_l_ldc)):
+            l_l_ldc[i][j] = float(l_l_ldc[i][j])
+
+    # A list that will hold each of the Multipoint objects
+    features_multipontos = []
+
+    for feature in l_l_ldc:
+        # Create a Multipoint object based on the array of points
+        # Append to the list of Multipoint objects
+        features_multipontos.append(
+            arcpy.Multipoint(
+                arcpy.Array(
+                    [ arcpy.Point(*coords) for coords in feature ]
+                )
+            )
+        )
+
+    # Persist a copy of the Multipoint objects using CopyFeatures
+    arcpy.CopyFeatures_management(features_multipontos, shape_a_adicionar)
+
+
 
 
 # 100%
@@ -71,7 +106,32 @@ def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
 
 
 
+# Funciona Solo
+def criarGeometriaVazia(_referencia_espacial,_tipo_de_geometria,_diretorio_saida,_nome_saida):
+    """Cria um Shape vazio para inserção de pontos."""
+
+    arcpy.CreateFeatureclass_management(
+        spatial_reference=_referencia_espacial,
+        geometry_type=_tipo_de_geometria,
+        out_path=_diretorio_saida,
+        out_name=_nome_saida,
+        )
+
+
+
+
+
 # CLASSES #
+
+
+
+class Caminhos:
+
+    """Caminhos utilizados na ToolBox."""
+
+    # diretorio_gdb = "C:\\Users\\{}\\Documents\\BancoDeDadosLocal\\Ocorrencias.gdb\\Poligonos\\MeusPoligonos".format(getpass.getuser())
+    diretorio_gdb = r"C:\Users\djalma.filho\Downloads\parcial_GDB_ocorrencias\ocorrencias_p_base2.shp"
+
 
 
 
@@ -81,13 +141,6 @@ class Textos:
     titulo = texto("Plotagem de Coordenadas")
     apresentacao = texto("Esse é o Python Toolbox definitivo que será criado a ferramenta para plotagem de pontos")
 
-
-
-class Caminhos:
-
-    """Caminhos utilizados na ToolBox."""
-
-    diretorio_gdb = "C:\\Users\\{}\\Documents\\BancoDeDadosLocal\\Ocorrencias.gdb\\Poligonos\\MeusPoligonos".format(getpass.getuser())
 
 
 
@@ -220,7 +273,6 @@ class PlotagemOcorrencias(object):
         parametros = Parametros()
         params = parametros.get()
         parametros.setup(params)
-
         return params
 
     def isLicensed(self):
@@ -234,6 +286,8 @@ class PlotagemOcorrencias(object):
         return
 
     def execute(self, parameters, messages):
+        pd = {p.name:p for p in parameters}
+        adiciona_multipontos(pd['latitude'].valueAsText, Caminhos.diretorio_gdb)
         return
 
 
