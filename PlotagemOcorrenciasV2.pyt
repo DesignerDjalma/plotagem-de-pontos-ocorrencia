@@ -47,6 +47,29 @@ def atualiza_ultima_linha_tda(nome_da_camada, nome_da_coluna, valor_novo, valor_
 
 
 
+def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
+    """Pega a lista que é gerada do quadro e tranforma em multipontos"""
+    # A list of features and coordinate pairs
+    feature_info = [
+        [ [1, 2], [2, 4], [3, 7] ],  # lista de pontos = 1 feature
+        [ [6, 8], [5, 7], [7, 2], [9, 5] ], # lista de pontos = 1 feature
+        ] # a lista maior # 
+
+    # A list that will hold each of the Multipoint objects
+    features = []
+
+    for feature in feature_info:
+        # Create a Multipoint object based on the array of points
+        # Append to the list of Multipoint objects
+        features.append(
+            arcpy.Multipoint(
+                arcpy.Array([arcpy.Point(*coords) for coords in feature])))
+
+    # Persist a copy of the Multipoint objects using CopyFeatures
+    arcpy.CopyFeatures_management(features, "c:/geometry/multipoints.shp")
+
+
+
 
 # CLASSES #
 
