@@ -27,7 +27,53 @@ def textoLista(lista):
     return [texto(i) for i in lista]
 
 
+def calcularCentroid(lista_de_pontos):
+    """Calcula o Centroide dos pontos fornecidos."""
+    x = 0
+    y = 0
 
+    for i in list:
+        x += i[0]
+        y += i[1]
+
+    centroide = [x,y]
+
+    return centroide
+
+
+def gd_para_gms(valor, casas=6):
+    """transforma as coordenadas de grau decimal para grau minuto
+
+    Args:
+        valor (_type_): _description_
+        casas (int, optional): _description_. Defaults to 15.
+    """
+    def NEWS(v):
+        if -60 < v < -46:
+            return "W"
+        if -10 < v < 3:
+            if v > 0:
+                return "N"
+            if v < 0:
+                return "S"
+            if v == 0:
+                return ""
+    letra = NEWS(valor)
+    # Verifcação trocar de sinal
+    sinal = ""
+    if valor < 0:
+        valor = abs(valor)
+        sinal = "-"
+
+    graus, r = int(valor), valor-int(valor)
+    minutos, r2 = int(r*60), r*60-int(r*60) 
+    segundos = round(r2*60, casas)
+    resultado = '{}{}°{}\'{:.06f}\" {}'.format(sinal,graus, minutos, segundos, letra)
+    print(resultado)
+    return resultado
+
+# looks like its working
+# 100% working
 def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
     """Pega a lista que é gerada do quadro e tranforma em multipontos"""
 
@@ -37,9 +83,12 @@ def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
     #     [ [6, 8], [5, 7], [7, 2], [9, 5] ], # lista de pontos = 1 feature
     #     ] # a lista maior # 
 
+    # primeiro formata os pontos para o formato adequado
     ldc = lista_de_pontos_quadro
     l_ldc = ldc.split(';')
     l_l_ldc = [ i.split(' ')[1:] for i in l_ldc ]
+
+    coordenadas_centroides = calcularCentroid(l_l_ldc)
 
     for j in range(2):
         for i in range(len(l_l_ldc)):
@@ -48,9 +97,10 @@ def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
     # A list that will hold each of the Multipoint objects
     features_multipontos = []
 
-    for feature in l_l_ldc:
+    # bug correction
+    for feature in [l_l_ldc]:
         # Create a Multipoint object based on the array of points
-        # Append to the list of Multipoint objects
+        # Append to theS list of Multipoint objects
         features_multipontos.append(
             arcpy.Multipoint(
                 arcpy.Array(
@@ -58,9 +108,11 @@ def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
                 )
             )
         )
+    # As ultimas duas linhas se referem a inserir no shape/geodatabase 
+    # as coordenadas
+    cursor = arcpy.da.InsertCursor(shape_a_adicionar, ["SHAPE@"])
+    cursor.insertRow(features_multipontos)
 
-    # Persist a copy of the Multipoint objects using CopyFeatures
-    arcpy.CopyFeatures_management(features_multipontos, shape_a_adicionar)
 
 
 
@@ -82,26 +134,6 @@ def atualiza_ultima_linha_tda(nome_da_camada, nome_da_coluna, valor_novo, valor_
 
 
 
-def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
-    """Pega a lista que é gerada do quadro e tranforma em multipontos"""
-    # A list of features and coordinate pairs
-    feature_info = [
-        [ [1, 2], [2, 4], [3, 7] ],  # lista de pontos = 1 feature
-        [ [6, 8], [5, 7], [7, 2], [9, 5] ], # lista de pontos = 1 feature
-        ] # a lista maior # 
-
-    # A list that will hold each of the Multipoint objects
-    features = []
-
-    for feature in feature_info:
-        # Create a Multipoint object based on the array of points
-        # Append to the list of Multipoint objects
-        features.append(
-            arcpy.Multipoint(
-                arcpy.Array([arcpy.Point(*coords) for coords in feature])))
-
-    # Persist a copy of the Multipoint objects using CopyFeatures
-    arcpy.CopyFeatures_management(features, "c:/geometry/multipoints.shp")
 
 
 
@@ -130,7 +162,9 @@ class Caminhos:
     """Caminhos utilizados na ToolBox."""
 
     # diretorio_gdb = "C:\\Users\\{}\\Documents\\BancoDeDadosLocal\\Ocorrencias.gdb\\Poligonos\\MeusPoligonos".format(getpass.getuser())
-    diretorio_gdb = r"C:\Users\djalma.filho\Downloads\parcial_GDB_ocorrencias\ocorrencias_p_base2.shp"
+    diretorio_gdb = r'C:\Users\{}\OneDrive - Brasil BioFuels S.A\GBD_BBF_ocorrencias\GBD_BBF_ocorrencias\ocorrencias_2022.shp'.format(getpass.getuser())
+    diretorio_gdb_temp = r"C:\Users\djalma.filho\repositorios\plotagem-de-pontos-ocorrencia\outputShapes\testes\ocorrencias_2022.shp"
+
 
 
 
@@ -206,7 +240,7 @@ class Parametros:
 
     def setup(self, params):
         pd = { p.name:p for p in params } # setting dict
-        pd['banco'].value = Caminhos.diretorio_gdb
+        pd['banco'].value = Caminhos.diretorio_gdb_temp
         pd['tipo_de_ocorrencia'].filter.list = Ocorrencias.tipos
         pd['latitude'].columns = Ocorrencias.colunas_tabela
         pd['latitude'].filters[1].type = 'GPString'
@@ -226,8 +260,8 @@ class Ocorrencias:
         ])
     colunas_tabela = [
             ['GPString', 'NOME DO PONTO'],
+            ['GPString', 'LONGITUDE ( max: - 46.05   min: - 58.90 )' ],
             ['GPString', 'LATITUDE ( min: - 9.85   max: 2.60 ) '],
-            ['GPString', 'LONGITUDE ( max: - 46.05   min: - 58.90 )' ]
             ]
 
 
@@ -286,8 +320,8 @@ class PlotagemOcorrencias(object):
         return
 
     def execute(self, parameters, messages):
-        pd = {p.name:p for p in parameters}
-        adiciona_multipontos(pd['latitude'].valueAsText, Caminhos.diretorio_gdb)
+        pd = { p.name:p for p in parameters }
+        adiciona_multipontos( pd['latitude'].valueAsText, Caminhos.diretorio_gdb_temp )
         return
 
 
